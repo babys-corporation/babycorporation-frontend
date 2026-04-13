@@ -41,11 +41,11 @@
     <section class="babasdestaque">
     <p>Conheça algumas de nossas profissionais mais bem avaliadas</p>
     <div>
-    <img src="" alt="">
+    <img src="/mariasilva" alt="Maria Silva">
     </div>
     </section>
   </body>
-
+  
 </template>
 
 <style scoped>
