@@ -41,10 +41,82 @@
     <section class="babasdestaque">
     <p>Conheça algumas de nossas profissionais mais bem avaliadas</p>
     <div>
-    <img src="/mariasilva" alt="Maria Silva">
+    <img src="/julianasantos.png" alt="Juliana Santos">
+    <h3>Juliana Santos</h3>
+    <img src="/map-pin.png" alt="mapa pin">
+    <p>Belo Horizonte, MG</p>
+    <p>Sou estudante de psicologia infantil e amo criar brincadeiras criativas para os...</p>
+    <img src="/clock.png" alt="clock">
+    <p>3 anos de experiência</p>
+    <p>Psicologia Infantil</p> <p>+1</p>
+    </div>
+    <div>
+        <img src="/Ana Paula Costa.png" alt="">
+        <h3>Ana Paula Costa</h3>
+        <img src="/map-pin.png" alt="mapa pin">
+        <p>Rio de Janeiro, RJ</p>
+        <p>Experiência com gêmeos e bebês. Formação em enfermagem pediátrica e muita paciência!</p>
+        <img src="/clock.png" alt="clock">
+        <p>Enfermagem</p> <p>Bebês</p>
+    </div>
+    <div>
+      <img src="/mariasilva.png" alt="Maria Silva">
+      <h3>Maria Silva</h3>
+      <img src="/map-pin.png" alt="mapa pin">
+      <p>São Paulo, SP</p>
+      <p>Adoro crianças e tenho experiência com todas as idades. Sou formada em pedagogia e possuo...</p>
+      <img src="/clock.png" alt="clock">
+      <p>5 anos de experiência</p>
+      <p>Primeiros Socorros</p>
+      <h4>Ver todas</h4>
+      <img src="/seta-esquerda.png" alt="seta esquerda">
     </div>
     </section>
+    <section class="comofunciona">
+<h1>Como funciona </h1>
+<p>Encontre sua babá ideal em 3 passos simples</p>
+<div>
+<p>1</p>
+<h5>Busque e Filtre</h5>
+<p>Navegue por perfis de babás, filtre por localização, experiência e disponibilidade.</p>
+</div>
+<div>
+<p>2</p>
+<h5>Conheça e Entreviste</h5>
+<p>Entre em contato com as babás que mais combinam com você e agende uma entrevista.</p>
+</div>
+<div>
+<p>3</p>
+<h5>Contrate com Confiança</h5>
+<p>Escolha a babá perfeita e tenha tranquilidade sabendo que seus filhos estão em boas mãos.</p>
+</div>
+    </section>
+    <section class="protacomecar">
+    <h1>Pronta para começar?</h1>
+    <p>Cadastre-se agora e encontre a babá perfeita para sua família</p>
+    <button>Encontrar Babás</button>
+    <button>Cadastrar como Usuario</button>
+    </section>
   </body>
+  <footer>
+  <img src="/baby.png" alt="baby">
+  <h1>BabyCare</h1>
+  <div>
+  <h2>Links Rápidos</h2>
+  <p>Início</p>
+  <p>Encontrar Babás</p>
+  <p>Sobre</p>
+  </div>
+  <div>
+  <h2>Para Babás</h2>
+  <p>Cadastrar-se</p>
+  <p>Como Funciona</p>
+  <p>Dicas e Recursos</p>
+  </div>
+  <div>
+  <h2>Contato</h2>
+  </div>
+  </footer>
   
 </template>
 
