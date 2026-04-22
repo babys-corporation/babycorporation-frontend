@@ -7,17 +7,20 @@
       <img src="/baby.png" alt="baby">
       <h1>BabyCorporation</h1>
     </header>
+    <main>
     <section class="encontreababa">
       <h2>Encontre a babá perfeita para sua família</h2>
       <p>Conectamos você com babás qualificadas, verificadas e de confiança.
         Cuidado profissional para seus pequenos.</p>
       <img src="/menina-balanco.png" alt="menina-balanco">
+      <div>
       <button>
         Encontrar Babás
       </button>
       <button>
         Cadastrar como Babá
       </button>
+      </div>
     </section>
     <section class="porqueescolher">
     <h1>Por que escolher a BabyCare?</h1>
@@ -97,6 +100,7 @@
     <button>Encontrar Babás</button>
     <button>Cadastrar como Usuario</button>
     </section>
+    </main>
   </body>
   <footer>
   <img src="/baby.png" alt="baby">
@@ -115,7 +119,14 @@
   </div>
   <div>
   <h2>Contato</h2>
+  <p>contato@babycare.com</p>
+  <p>(11) 9999-9999 </p>
+  <p>São Paulo, Brasil </p>
+  <div>
+ © 2026 BabyCare. Todos os direitos reservados.
   </div>
+  </div>
+  
   </footer>
   
 </template>
@@ -127,6 +138,8 @@
 body{
   align-items: center;
   text-align: center;
+  justify-content: center;
+  background-color:#FBF3FB;
 } 
 /*====================
         header        
@@ -143,4 +156,34 @@ header img{
 width: 10%;
 height: 10%;
 }
+/*====================
+        main
+=====================*/
+main{
+  background-color: #FBF3FB;
+}
+
+/*====================
+    encontre a baba
+=====================*/
+.encontreababa{
+  text-align: center;
+  align-items: center;
+  border-top: solid#E5E5E5;
+}
+.encontreababa div button{
+justify-content: center;
+align-items: center;
+}
+.encontreababa button{
+  padding:20px 30px;
+  display: flex;
+  border-radius: 10px;
+  border:#F6339A;
+  margin:20px auto;
+  background-color:#F6339A;
+  color: aliceblue;
+  font-size: 20px;
+}
+
 </style>
