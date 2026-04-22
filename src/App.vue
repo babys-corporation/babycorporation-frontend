@@ -17,7 +17,7 @@
       <button>
         Encontrar Babás
       </button>
-      <button>
+      <button class="inverso">
         Cadastrar como Babá
       </button>
       </div>
@@ -42,6 +42,7 @@
     </div>
     </section>
     <section class="babasdestaque">
+    <h1>Babás em Destaque</h1>
     <p>Conheça algumas de nossas profissionais mais bem avaliadas</p>
     <div>
     <img src="/julianasantos.png" alt="Juliana Santos">
@@ -160,16 +161,18 @@ height: 10%;
         main
 =====================*/
 main{
-  background-color: #FBF3FB;
+  background-color: aliceblue;
+  text-align: center;
 }
 
 /*====================
     encontre a baba
 =====================*/
 .encontreababa{
-  text-align: center;
   align-items: center;
   border-top: solid#E5E5E5;
+  background-color: #FBF3FB;
+  padding: 40px 0px;
 }
 .encontreababa div button{
 justify-content: center;
@@ -178,12 +181,28 @@ align-items: center;
 .encontreababa button{
   padding:20px 30px;
   display: flex;
-  border-radius: 10px;
+  border-radius: 10px 10px;
   border:#F6339A;
-  margin:20px auto;
+  margin:10px auto;
   background-color:#F6339A;
   color: aliceblue;
-  font-size: 20px;
+  font-size: 15px;
+  width: 220px;
+  height:60px;
+}
+.encontreababa .inverso{
+  color: #F6339A;
+  background-color: #FBF3FB;
+  border:solid #F6339A;
+}
+/*====================
+    porque escolher
+=====================*/
+.porqueescolher{
+  padding: 40px 0px;
+}.porqueescolher p{
+  width: 300px;
+  margin:20px  auto;
 }
 
 </style>
