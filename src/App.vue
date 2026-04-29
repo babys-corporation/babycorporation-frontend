@@ -200,8 +200,11 @@
     </main>
   </body>
   <footer>
+  <div class="footerbaby">
     <img src="/baby.png" alt="baby">
     <h1>BabyCare</h1>
+    </div>
+    Conectando famílias com babás qualificadas e confiáveis.
     <div>
       <h2>Links Rápidos</h2>
       <p>Início</p>
@@ -219,7 +222,7 @@
       <p>contato@babycare.com</p>
       <p>(11) 9999-9999 </p>
       <p>São Paulo, Brasil </p>
-      <div>
+      <div class="copyright">
         © 2026 BabyCare. Todos os direitos reservados.
       </div>
     </div>
@@ -470,6 +473,43 @@ main {
 .prontacomecar  h1 {
   font-size: 40px;
   margin-bottom: 15px;
+}
+.prontacomecar button{
+  background-color: #FFFFFF;
+  color:#F6339A;
+  font-weight: bold;
+}
+.prontacomecar .inverso{
+  color: #FFFFFF;
+  border: solid #FFFFFF;
+  background: linear-gradient(135deg, #ff2f92, #8b5cf6);
+  font-weight: bold;
+  border-width: 2.5px
+}
+/*====================
+        footer
+=====================*/
+footer{
+  background-color: #101828;
+  color: #FFFFFF;
+  padding: 20px 40px;
+}
+.footerbaby{
+  display: flex;
+  text-align: center;
+  align-items: center;
+}
+footer div img{
+  width: 50px;
+  height: 50px;
+  margin: 0px 10px 0px 0px;
+}
+.copyright{
+  text-align: center;
+ border-top: solid #E5E5E5;
+ margin:10px -40px;
+ align-items: center;
+ padding: 20px
 }
 /*====================
         button
