@@ -1,17 +1,12 @@
-<script setup lang="ts">
-
+<script setup>
+import AppHeader from './componentes/layout/AppHeader.vue';
 </script>
 
 <template>
-
-  <body>
-    <header>
-      <img src="/baby.png" alt="baby">
-      <h1>BabyCorporation</h1>
-    </header>
+ 
+    <AppHeader/>
     <main>
       <section class="encontreababa">
-
         <h2>Encontre a babá perfeita para sua família</h2>
         <p>Conectamos você com babás qualificadas, verificadas e de confiança.
           Cuidado profissional para seus pequenos.</p>
@@ -199,7 +194,6 @@
         <button class="inverso">Cadastrar como Usuario</button>
       </section>
     </main>
-  </body>
   <footer>
   <div class="footerbaby">
     <img src="/baby.png" alt="baby">
