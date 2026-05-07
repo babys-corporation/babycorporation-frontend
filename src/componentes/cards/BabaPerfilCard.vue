@@ -1,13 +1,13 @@
-<script setup lang="ts">
-defineProps<{
-  nome: string
-  cidade: string
-  experiencia: string
-  avaliacao: number
-  avaliacoes: number
-  preco: number
-  foto: string
-}>()
+<script setup>
+defineProps({
+  nome: String,
+  cidade: String,
+  experiencia: String,
+  avaliacao: Number,
+  avaliacoes: Number,
+  preco: Number,
+  foto: String
+})
 </script>
 
 <template>
@@ -42,7 +42,10 @@ defineProps<{
   margin-bottom: 12px;
 }
 
-h2 { font-size: 22px; font-weight: bold; }
+h2 {
+  font-size: 22px;
+  font-weight: bold;
+}
 
 .info-linha {
   display: flex;
@@ -53,7 +56,10 @@ h2 { font-size: 22px; font-weight: bold; }
   margin: 8px 0;
 }
 
-.avaliacao { font-size: 14px; color: #555; }
+.avaliacao {
+  font-size: 14px;
+  color: #555;
+}
 
 .preco {
   font-size: 22px;

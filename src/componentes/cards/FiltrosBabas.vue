@@ -1,6 +1,7 @@
-<!-- src/componentes/FiltrosBabas.vue -->
-<script setup lang="ts">
-import { ref } from 'vue'
+<script setup>
+import { ref, watch } from 'vue'
+
+const emit = defineEmits(['atualizar'])
 
 const busca = ref('')
 const experiencia = ref('Todas')
@@ -9,26 +10,29 @@ const ordenar = ref('Melhor Avaliação')
 
 const opcoesExperiencia = ['Todas', '1 ano', '2 anos', '3+ anos', '5+ anos', '10+ anos']
 const opcoesOrdenar = ['Melhor Avaliação', 'Mais Experiência', 'Mais Recente']
+
+watch([busca, experiencia, apenasVerificadas, ordenar], () => {
+  emit('atualizar', {
+    busca: busca.value,
+    experiencia: experiencia.value,
+    apenasVerificadas: apenasVerificadas.value,
+    ordenar: ordenar.value
+  })
+})
 </script>
 
 <template>
   <div class="filtros">
     <h3>⚙ Filtros</h3>
 
-    <!-- Busca -->
     <div class="grupo">
       <label>Buscar</label>
       <div class="input-icon">
         <span>🔍</span>
-        <input
-          v-model="busca"
-          type="text"
-          placeholder="Nome, cidade, habilidade..."
-        />
+        <input v-model="busca" type="text" placeholder="Nome, cidade, habilidade..." />
       </div>
     </div>
 
-    <!-- Experiência -->
     <div class="grupo">
       <label>Experiência</label>
       <select v-model="experiencia">
@@ -36,13 +40,11 @@ const opcoesOrdenar = ['Melhor Avaliação', 'Mais Experiência', 'Mais Recente'
       </select>
     </div>
 
-    <!-- Apenas verificadas -->
     <div class="grupo checkbox">
       <input type="checkbox" v-model="apenasVerificadas" id="verificadas" />
       <label for="verificadas">Apenas verificadas</label>
     </div>
 
-    <!-- Ordenar -->
     <div class="grupo ordenar">
       <span>Ordenar por:</span>
       <select v-model="ordenar">
