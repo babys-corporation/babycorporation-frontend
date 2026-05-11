@@ -1,12 +1,18 @@
 <script>
+import { defineComponent } from 'vue';
+export default defineComponent({
+  name: 'AppHeader',
+});
 
 </script>
+
 <template>
     <header>
       <img src="/baby.png" alt="baby">
       <h1>BabyCorporation</h1>
     </header>
 </template>
+
 <style>
 header {
   display: flex;
