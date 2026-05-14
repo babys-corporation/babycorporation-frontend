@@ -1,23 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/views/HomeView.vue';
+import WelcomeView from '@/views/WelcomeView.vue';
+import BabaCard from "@/componentes/cards/BabaCard.vue";
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView,
-  },
-  {
-    path: '/records',
-    name: 'records',
-    // Lazy loading: carrega apenas quando necessário
-    component: () => import('@/views/RecordsView.vue'),
-  },
-  {
-    path: '/records/:id',
-    name: 'record-detail',
-    component: () => import('@/views/RecordDetailView.vue'),
-  },
+    name: 'welcome',
+    component: WelcomeView,
+  }
 ];
 
 const router = createRouter({
