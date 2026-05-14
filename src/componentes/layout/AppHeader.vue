@@ -1,25 +1,22 @@
-<script>
-
+<script setup lang="ts">
+import { Baby } from 'lucide-vue-next';
 </script>
+
 <template>
     <header>
-      <img src="/baby.png" alt="baby">
+      <Baby :size="35" color="#F6339A" stroke-width="1.5" />
       <h1>BabyCorporation</h1>
     </header>
 </template>
+
 <style>
 header {
   display: flex;
   align-items: center;
-  color: FFFFFF;
 }
 
 header h1 {
   font-size: 1.2rem;
-}
-
-header img {
-  width: 10%;
-  height: 10%;
+  color: #000000;
 }
 </style>
