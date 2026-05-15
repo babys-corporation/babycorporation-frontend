@@ -6,7 +6,7 @@ import { MapPin, Clock } from 'lucide-vue-next';
   <div class="cards">
     <div class="card">
       <div class="img-container">
-        <img src="/julianasantos.png" alt="Juliana Santos" />
+        <img src="../assets/images/julianasantos.png" alt="Juliana Santos" />
         <span class="verificado">✔ Verificado</span>
       </div>
 
@@ -37,7 +37,7 @@ import { MapPin, Clock } from 'lucide-vue-next';
 
     <div class="card">
       <div class="img-container">
-        <img src="/Ana Paula Costa.png" alt="" />
+        <img src="../assets/images/AnaPaulaCosta.png" alt="Ana Paula Costa" />
         <span class="verificado">✔ Verificado</span>
       </div>
 
@@ -68,7 +68,7 @@ import { MapPin, Clock } from 'lucide-vue-next';
 
     <div class="card">
       <div class="img-container">
-        <img src="/mariasilva.png" alt="Maria Silva" />
+        <img src="../assets/images/MariaSilva.png" alt="Maria Silva" />
         <span class="verificado">✔ Verificado</span>
       </div>
 

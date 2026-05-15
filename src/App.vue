@@ -28,7 +28,6 @@ body {
   align-items: center;
   text-align: center;
   justify-content: center;
-  background-color: #FBF3FB;
 }
 
 /*====================

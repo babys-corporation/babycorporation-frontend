@@ -13,7 +13,7 @@ const router = useRouter();
         <p>Conectamos você com babás qualificadas, verificadas e de confiança.
             Cuidado profissional para seus pequenos.</p>
 
-        <img src="/menina-balanco.png" alt="menina-balanco">
+        <img src="../assets/images/menina-balanco.png" alt="menina-balanco">
         <div>
             <button>
                 Encontrar Babás
