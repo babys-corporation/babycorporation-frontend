@@ -3,29 +3,51 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import BabaCard from '@/componentes/cards/BabaCard.vue';
 import { Shield, Star, Clock, ArrowRight } from 'lucide-vue-next';
+
 const router = useRouter();
+
+const defaultBaba = ref({
+  id: 1,
+  photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
+  name: 'Maria Souza',
+  location: 'São Paulo',
+  experience: 5,
+  hourlyRate: 35,
+  rating: 4.9,
+  verified: true,
+  skills: ['Primeiros Socorros', 'Recém-nascidos'],
+  reviewsCount: 12,
+  bio: 'Experiente com recém-nascidos e cuidados especiais.'
+});
+
+// Funções para navegar entre as páginas
+const navegarParaBusca = () => {
+  router.push('/buscar-babas');
+};
+
+const navegarParaCadastro = () => {
+  router.push('/cadastro-responsavel');
+};
 </script>
 
 <template>
     <section class="encontreababa">
-
         <h2>Encontre a babá perfeita para sua família</h2>
         <p>Conectamos você com babás qualificadas, verificadas e de confiança.
             Cuidado profissional para seus pequenos.</p>
 
-        <img src="/menina-balanco.png" alt="menina-balanco">
+        <img src="../assets/images/menina-balanco.png" alt="menina-balanco">
         <div>
-            <button>
+            <button @click="navegarParaBusca">
                 Encontrar Babás
             </button>
-            <button class="inverso">
+            <button class="inverso" @click="navegarParaCadastro">
                 Cadastrar como Babá
             </button>
         </div>
     </section>
 
     <section class="porqueescolher">
-    
         <h1>Por que escolher a BabyCare?</h1>
         <p>Segurança e qualidade para o que mais importa</p>
     
@@ -52,33 +74,30 @@ const router = useRouter();
             <h2>Disponibilidade Flexível</h2>
             <p>Encontre babás disponíveis para horários que funcionam para você.</p>
         </div>
-
     </section>
-    <section class="babasdestaque">
 
+    <section class="babasdestaque">
         <h1>Babás em Destaque</h1>
         <p>Conheça algumas de nossas profissionais mais bem avaliadas</p>
 
-        <BabaCard title="BabaCard" />
+        <BabaCard :babysitter="defaultBaba" />
 
-        <div class="seta-rosa">
+        <div class="seta-rosa" @click="navegarParaBusca">
             <p class="ver-todas">Ver todas</p>
             <ArrowRight color="#F6339A" :size="20" />
         </div>
     </section>
+
     <section class="comofunciona">
         <h1>Como funciona</h1>
-        <p class="subtitulo">Encontre sua babá ideal em 3 passos simples</p>
+        <p class="subtitulo">Encontre sua babá ideal in 3 passos simples</p>
 
         <div class="passos">
-
             <div class="passo">
                 <div class="numero">1</div>
                 <div class="texto">
                     <h3>Busque e Filtre</h3>
-                    <p>
-                        Navegue por perfis de babás, filtre por localização, experiência e disponibilidade.
-                    </p>
+                    <p>Navegue por perfis de babás, filtre por localização, experiência e disponibilidade.</p>
                 </div>
             </div>
 
@@ -86,9 +105,7 @@ const router = useRouter();
                 <div class="numero">2</div>
                 <div class="texto">
                     <h3>Conheça e Entreviste</h3>
-                    <p>
-                        Entre em contato com as babás que mais combinam com você e agende uma entrevista.
-                    </p>
+                    <p>Entre em contato com as babás que mais combinam com você e agende uma entrevista.</p>
                 </div>
             </div>
 
@@ -96,19 +113,17 @@ const router = useRouter();
                 <div class="numero">3</div>
                 <div class="texto">
                     <h3>Contrate com Confiança</h3>
-                    <p>
-                        Escolha a babá perfeita e tenha tranquilidade sabendo que seus filhos estão em boas mãos.
-                    </p>
+                    <p>Escolha a babá perfeita e tenha tranquilidade sabendo que seus filhos estão em boas mãos.</p>
                 </div>
             </div>
-
         </div>
     </section>
+
     <section class="prontacomecar">
         <h1>Pronta para começar?</h1>
         <p>Cadastre-se agora e encontre a babá perfeita para sua família</p>
-        <button>Encontrar Babás</button>
-        <button class="inverso">Cadastrar como Usuario</button>
+        <button @click="navegarParaBusca">Encontrar Babás</button>
+        <button class="inverso" @click="navegarParaCadastro">Cadastrar como Usuario</button>
     </section>
 </template>
 
@@ -118,7 +133,7 @@ const router = useRouter();
 =====================*/
 .encontreababa {
     align-items: center;
-    border-top: solid#E5E5E5;
+    border-top: solid #E5E5E5;
     background-color: #FBF3FB;
     padding: 0 30px 0 40px;
 }
@@ -131,7 +146,7 @@ const router = useRouter();
 .encontreababa button {
     padding: 20px 30px;
     display: flex;
-    border-radius: 10px 10px;
+    border-radius: 10px;
     border: #F6339A;
     margin: 10px auto;
     background-color: #F6339A;
@@ -148,7 +163,7 @@ const router = useRouter();
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 15px auto; /* Centraliza a bolinha e dá espaço pro texto */
+    margin: 0 auto 15px auto;
     background-color: #FCE7F3;
 }
 
@@ -209,7 +224,7 @@ div.seta-rosa {
 }
 
 .ver-todas {
-    margin-top: 20px 0 0 0;
+    margin: 20px 0 0 0;
     color: #F6339A;
     cursor: pointer;
 }
@@ -217,7 +232,6 @@ div.seta-rosa {
 /*====================
     como funciona
 =====================*/
-
 .comofunciona {
     background: #eee9ee;
     padding: 50px 20px;
@@ -262,13 +276,11 @@ div.seta-rosa {
 }
 
 .texto h3 {
-    margin: 0;
-    font-size: 18px;
     margin: 0px 0px 10px 30px;
+    font-size: 18px;
 }
 
 .texto p {
-    margin-top: 5px;
     color: #000000;
     font-size: 14px;
     margin: 0px 0px 0px 30px;
@@ -277,7 +289,6 @@ div.seta-rosa {
 /*====================
     Pronta comecar
 =====================*/
-
 .prontacomecar {
     background: linear-gradient(135deg, #ff2f92, #8b5cf6);
     color: white;
@@ -301,17 +312,16 @@ div.seta-rosa {
     border: solid #FFFFFF;
     background: linear-gradient(135deg, #ff2f92, #8b5cf6);
     font-weight: bold;
-    border-width: 2.5px
+    border-width: 2.5px;
 }
 
 /*====================
         button
 =====================*/
-
 button {
     padding: 20px 30px;
     display: flex;
-    border-radius: 10px 10px;
+    border-radius: 10px;
     border: #F6339A;
     margin: 10px auto;
     background-color: #F6339A;
@@ -319,6 +329,7 @@ button {
     font-size: 15px;
     width: 220px;
     height: 60px;
+    cursor: pointer;
 }
 
 div button {

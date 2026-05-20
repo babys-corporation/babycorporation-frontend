@@ -34,7 +34,7 @@ const criancas = ref([
         <span>{{ quantidadeCriancas }}</span>
         <div class="setas">
           <button @click="quantidadeCriancas++">▲</button>
-          <button @click="if(quantidadeCriancas > 1) quantidadeCriancas--">▼</button>
+          <button @click="quantidadeCriancas = Math.max(1, quantidadeCriancas - 1)">▼</button>
         </div>
       </div>
     </div>

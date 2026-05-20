@@ -1,8 +1,8 @@
 <script setup>
-import PerfilFamilia from '../componentes/PerfilFamilia.vue'
-import NecessidadesFamilia from '../componentes/NecessidadesFamilia.vue'
-import InfoCriancas from '../componentes/InfoCriancas.vue'
-import OpcoesBaba from '../componentes/OpcoesBaba.vue'
+import PerfilFamilia from '../componentes/cards/PerfilFamilia.vue'
+import NecessidadesFamilia from '../componentes/cards/NecessidadesFamilia.vue'
+import InfoCriancas from '../componentes/cards/InfoCriancas.vue'
+import OpcoesBaba from '../componentes/cards/OpcoesBaba.vue'
 
 const familia = {
   nome: 'Isabela Souza',
