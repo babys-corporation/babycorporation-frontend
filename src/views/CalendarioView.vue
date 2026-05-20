@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import OpcoesBaba from '../componentes/OpcoesBaba.vue'
+import OpcoesBaba from '../componentes/cards/OpcoesBaba.vue'
 
 const diaSelecionado = ref(1)
 
@@ -37,7 +37,7 @@ const babas = [
           v-for="(dia, j) in semana"
           :key="j"
           :class="{ selecionado: dia === diaSelecionado, vazio: !dia }"
-          @click="if(dia) diaSelecionado = dia"
+          @click="dia && (diaSelecionado = dia)"
         >
           {{ dia || '' }}
         </span>
@@ -46,7 +46,7 @@ const babas = [
 
     <div class="card responsavel">
       <div class="img-container">
-        <img src="/patricia.png" alt="Responsavel" />
+        <img src="../assets/images/crianca.png" alt="Responsavel" />
         <span class="badge">✔</span>
       </div>
       <p class="nome">Responsavel</p>
@@ -57,7 +57,7 @@ const babas = [
     <div class="grid-criancas">
       <div class="card" v-for="n in 2" :key="n">
         <div class="img-container">
-          <img src="/patricia.png" :alt="'Criança ' + n" />
+          <img src="../assets/images/crianca.png" :alt="'Criança ' + n" />
           <span class="badge">✔</span>
         </div>
         <p class="nome">Criança {{ n }}</p>

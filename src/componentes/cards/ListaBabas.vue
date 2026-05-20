@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
-import BabaCard from './cards/BabaCard.vue'
-import FiltrosBabas from './FiltrosBabas.vue'
+import BabaCard from '@/componentes/cards/BabaCard.vue'
+import FiltrosBabas from '@/componentes/cards/FiltrosBabas.vue' 
 
 const babas = ref([
   {

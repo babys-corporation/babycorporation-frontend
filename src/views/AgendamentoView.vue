@@ -1,5 +1,5 @@
 <script setup>
-import BabaDisponibilidade from '../componentes/BabaDisponibilidade.vue'
+import BabaDisponibilidade from '../componentes/cards/BabaDisponibilidade.vue'
 
 const baba = {
   nome: 'Fernanda Lima',
