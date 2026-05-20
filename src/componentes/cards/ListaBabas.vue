@@ -1,76 +1,9 @@
-<script setup>
-import { ref, computed } from 'vue'
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import BabaCard from '@/componentes/cards/BabaCard.vue'
 import FiltrosBabas from '@/componentes/cards/FiltrosBabas.vue' 
-
-const babas = ref([
-  {
-    nome: 'Patrícia Alves',
-    cidade: 'Brasília, DF',
-    descricao: 'Mais de 10 anos de experiência. Especialista em rotinas e desenvolvimento infantil.',
-    experiencia: '10 anos de experiência',
-    anosExp: 10,
-    foto: '/patricia.png',
-    tags: ['Psicologia Infantil'],
-    verificada: true,
-    avaliacao: 5.0
-  },
-  {
-    nome: 'Ana Paula Costa',
-    cidade: 'Rio de Janeiro, RJ',
-    descricao: 'Experiência com gêmeos e bebês. Formação em enfermagem pediátrica e muita paciência!',
-    experiencia: '6 anos de experiência',
-    anosExp: 6,
-    foto: '/Ana Paula Costa.png',
-    tags: ['Enfermagem', 'Bebês'],
-    verificada: true,
-    avaliacao: 4.8
-  },
-  {
-    nome: 'Maria Silva',
-    cidade: 'São Paulo, SP',
-    descricao: 'Adoro crianças e tenho experiência com todas as idades. Formada em pedagogia.',
-    experiencia: '5 anos de experiência',
-    anosExp: 5,
-    foto: '/mariasilva.png',
-    tags: ['Primeiros Socorros'],
-    verificada: true,
-    avaliacao: 4.7
-  },
-  {
-    nome: 'Juliana Santos',
-    cidade: 'Belo Horizonte, MG',
-    descricao: 'Sou estudante de psicologia infantil e amo criar brincadeiras criativas.',
-    experiencia: '3 anos de experiência',
-    anosExp: 3,
-    foto: '/julianasantos.png',
-    tags: ['Psicologia Infantil'],
-    verificada: true,
-    avaliacao: 4.6
-  },
-  {
-    nome: 'Camila Oliveira',
-    cidade: 'Curitiba, PR',
-    descricao: 'Experiência com crianças especiais e rotinas estruturadas. Responsável e carinhosa.',
-    experiencia: '6 anos de experiência',
-    anosExp: 6,
-    foto: '/camila.png',
-    tags: ['Enfermagem', 'Bebês'],
-    verificada: true,
-    avaliacao: 4.5
-  },
-  {
-    nome: 'Fernanda Lima',
-    cidade: 'Porto Alegre, RS',
-    descricao: 'Amo ensinar e brincar! Tenho experiência com crianças de 2 a 10 anos.',
-    experiencia: '4 anos de experiência',
-    anosExp: 4,
-    foto: '/fernanda.png',
-    tags: ['Primeiros Socorros'],
-    verificada: false,
-    avaliacao: 4.3
-  }
-])
+import { useBabaStore } from '@/stores/baba'
+const babaStore = useBabaStore()
 
 const filtros = ref({
   busca: '',
@@ -79,54 +12,30 @@ const filtros = ref({
   ordenar: 'Melhor Avaliação'
 })
 
-function atualizarFiltros(novosFiltros) {
+function atualizarFiltros(novosFiltros: any) {
   filtros.value = novosFiltros
 }
 
-const babasFiltradas = computed(() => {
-  let resultado = [...babas.value]
-
-  if (filtros.value.busca) {
-    const termo = filtros.value.busca.toLowerCase()
-    resultado = resultado.filter(b =>
-      b.nome.toLowerCase().includes(termo) ||
-      b.cidade.toLowerCase().includes(termo) ||
-      b.tags.some(t => t.toLowerCase().includes(termo))
-    )
-  }
-
-  if (filtros.value.experiencia !== 'Todas') {
-    const anos = parseInt(filtros.value.experiencia)
-    resultado = resultado.filter(b => b.anosExp >= anos)
-  }
-
-  if (filtros.value.apenasVerificadas) {
-    resultado = resultado.filter(b => b.verificada)
-  }
-
-  if (filtros.value.ordenar === 'Melhor Avaliação') {
-    resultado.sort((a, b) => b.avaliacao - a.avaliacao)
-  } else if (filtros.value.ordenar === 'Mais Experiência') {
-    resultado.sort((a, b) => b.anosExp - a.anosExp)
-  }
-
-  return resultado
+onMounted(async() => {
+  await babaStore.getBabas()
 })
 </script>
 
 <template>
   <div class="pagina">
     <h1>Encontrar Babás</h1>
-    <p class="subtitulo">{{ babasFiltradas.length }} babás disponíveis</p>
+    <p class="subtitulo">{{ babaStore.babas.length }} babás disponíveis</p>
 
     <FiltrosBabas @atualizar="atualizarFiltros" />
 
-    <div v-if="babasFiltradas.length > 0" class="lista">
-      <BabaCard
-        v-for="baba in babasFiltradas"
-        :key="baba.nome"
-        v-bind="baba"
-      />
+    <div v-if="babaStore.babas.length > 0" class="lista">
+      <div v-for="(baba, index) in babaStore.babas" :key="index" class="baba-card">
+        <img v-if="baba.usuario.foto" :src="baba.usuario.foto" alt="foto">
+        <div v-else class="user-default"></div>
+        <div class="user-scope">
+          <h1>{{ baba.usuario.username }}</h1>
+        </div>
+      </div>
     </div>
 
     <div v-else class="vazio">
@@ -159,6 +68,28 @@ const babasFiltradas = computed(() => {
   flex-direction: column;
   gap: 16px;
   margin-top: 20px;
+}
+
+.baba-card {
+  border: solid 1px #000000;
+  border-radius: 10px;
+  text-align: start;
+}
+
+.baba-card .user-default {
+  width: 100%;
+  border-radius: 10px 0 0 0;
+  height: 20%;
+}
+
+.baba-card .user-scope {
+  width: 100%;
+  padding: 10px;
+}
+
+.baba-card .user-scope h1 {
+  font-weight: 100;
+  font-size: 15px;
 }
 
 .vazio {
