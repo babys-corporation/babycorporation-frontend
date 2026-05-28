@@ -33,7 +33,11 @@ onMounted(async() => {
         <img v-if="baba.usuario.foto" :src="baba.usuario.foto" alt="foto">
         <div v-else class="user-default"></div>
         <div class="user-scope">
+          <p>{{ baba.usuario.foto }}</p>
           <h1>{{ baba.usuario.username }}</h1>
+        <p>{{ baba.descricao}}</p>
+        <p>{{ baba.habilidades }}</p>
+        <p>{{ baba.experiencia_anos }}</p>
         </div>
       </div>
     </div>
