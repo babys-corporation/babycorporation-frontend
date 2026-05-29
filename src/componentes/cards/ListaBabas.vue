@@ -20,86 +20,191 @@ onMounted(async() => {
   await babaStore.getBabas()
 })
 </script>
-
 <template>
   <div class="pagina">
     <h1>Encontrar Babás</h1>
-    <p class="subtitulo">{{ babaStore.babas.length }} babás disponíveis</p>
+    <p class="subtitulo">
+      {{ babaStore.babas.length }} babás disponíveis
+    </p>
 
     <FiltrosBabas @atualizar="atualizarFiltros" />
 
     <div v-if="babaStore.babas.length > 0" class="lista">
-      <div v-for="(baba, index) in babaStore.babas" :key="index" class="baba-card">
-        <img v-if="baba.usuario.foto" :src="baba.usuario.foto" alt="foto">
-        <div v-else class="user-default"></div>
-        <div class="user-scope">
-          <p>{{ baba.usuario.foto }}</p>
-          <h1>{{ baba.usuario.username }}</h1>
-        <p>{{ baba.descricao}}</p>
-        <p>{{ baba.habilidades }}</p>
-        <p>{{ baba.experiencia_anos }}</p>
+      <div
+        v-for="(baba, index) in babaStore.babas"
+        :key="index"
+        class="baba-card"
+      >
+        <div class="foto-area">
+          <img
+            v-if="baba.usuario.foto"
+            :src="baba.usuario.foto"
+            alt="foto"
+          />
+
+          <div v-else class="user-default"></div>
+
+          <span
+            v-if="baba.verificada"
+            class="verificado"
+          >
+            Verificado
+          </span>
+        </div>
+
+        <div class="conteudo">
+          <h2>{{ baba.usuario.username }}</h2>
+
+          <p class="descricao">
+            {{ baba.descricao }}
+          </p>
+
+           <span class="experiencia">
+              {{ baba.experiencia_anos }} anos de experiência
+            </span>
+
+          <p class="habilidade">
+            {{ baba.habilidades }}
+          </p>
+
+          <div class="rodape">
+            <span class="preco">
+              R$ {{ baba.valor_hora || 24 }}/hora
+            </span>
+
+           
+          </div>
         </div>
       </div>
     </div>
 
     <div v-else class="vazio">
-      <p>Nenhuma babá encontrada com esses filtros.</p>
+      <p>Nenhuma babá encontrada.</p>
     </div>
   </div>
 </template>
-
+      
 <style scoped>
 .pagina {
-  padding: 24px 16px;
-  background: #F9FAFB;
+  background: #f5f5f5;
   min-height: 100vh;
+  padding: 24px 16px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .pagina h1 {
-  font-size: 28px;
-  font-weight: bold;
+  font-size: 34px;
+  font-weight: 700;
+  color: #111;
   margin-bottom: 4px;
 }
 
 .subtitulo {
-  font-size: 14px;
   color: #888;
-  margin-bottom: 20px;
+  font-size: 14px;
+  margin-bottom: 24px;
 }
 
 .lista {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   margin-top: 20px;
+  justify-content: center;
+  align-items: center;
 }
 
 .baba-card {
-  border: solid 1px #000000;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #ececec;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: 0.2s;
+  width: 80%;
+  text-align: left;
+}
+
+.baba-card:hover {
+  transform: translateY(-2px);
+}
+
+.foto-area {
+  position: relative;
+}
+
+.foto-area img,
+.user-default {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  background: #ddd;
+}
+
+.verificado {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #22c55e;
+  color: white;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-weight: bold;
+}
+
+.conteudo {
+  padding: 16px;
+}
+
+.conteudo h2 {
+  font-size: 20px;
+  margin-bottom: 6px;
+  color: #111;
+}
+
+.cidade {
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.descricao {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.habilidade{
+font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  background-color:#E5E5E5 ;
+  padding: 4px;
   border-radius: 10px;
-  text-align: start;
 }
 
-.baba-card .user-default {
-  width: 100%;
-  border-radius: 10px 0 0 0;
-  height: 20%;
+.rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.baba-card .user-scope {
-  width: 100%;
-  padding: 10px;
+.preco {
+  color: #ff2d8d;
+  font-size: 22px;
+  font-weight: bold;
 }
 
-.baba-card .user-scope h1 {
-  font-weight: 100;
-  font-size: 15px;
+.experiencia {
+  font-size: 13px;
+  color: #777;
 }
 
 .vazio {
   text-align: center;
   padding: 40px;
-  color: #aaa;
-  font-size: 15px;
+  color: #999;
 }
 </style>
