@@ -1,5 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useBabaStore } from '@/stores/baba'
+const babaStore = useBabaStore()
+
 
 const form = ref({
   nome: '', nascimento: '', experiencia: '', preco: '',

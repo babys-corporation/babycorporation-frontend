@@ -1,5 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useBabaStore } from '@/stores/baba'
+const babaStore = useBabaStore()
 
 const emit = defineEmits(['atualizar'])
 
@@ -14,7 +16,7 @@ const opcoesOrdenar = ['Melhor Avaliação', 'Mais Experiência', 'Mais Recente'
 watch([busca, experiencia, apenasVerificadas, ordenar], () => {
   emit('atualizar', {
     busca: busca.value,
-    experiencia: experiencia.value,
+    experiencia: babaStore.value,
     apenasVerificadas: apenasVerificadas.value,
     ordenar: ordenar.value
   })

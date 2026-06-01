@@ -38,22 +38,24 @@ onMounted(async() => {
         <div class="foto-area">
           <img
             v-if="baba.usuario.foto"
-            :src="baba.usuario.foto"
+            :src="baba.usuario.foto.file"
             alt="foto"
           />
 
           <div v-else class="user-default"></div>
 
+         <!--
           <span
             v-if="baba.verificada"
             class="verificado"
           >
             Verificado
           </span>
+          -->
         </div>
 
         <div class="conteudo">
-          <h2>{{ baba.usuario.username }}</h2>
+          <h2>{{ baba.usuario.first_name }}  {{ baba.usuario.last_name }}</h2>
 
           <p class="descricao">
             {{ baba.descricao }}
@@ -136,7 +138,7 @@ onMounted(async() => {
 .foto-area img,
 .user-default {
   width: 100%;
-  height: 220px;
+  height: 100%;
   object-fit: cover;
   background: #ddd;
 }

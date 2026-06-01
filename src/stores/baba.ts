@@ -17,7 +17,9 @@ interface BabaInterface{
         "is_active": boolean,
         "date_joined": string,
         "tipo": string,
-        "foto": string | null,
+        "foto": {
+            file: string | undefined
+        },
         "telefone": string | null,
         "groups": [],
         "user_permissions": []
@@ -40,6 +42,8 @@ export const useBabaStore = defineStore('babaStore', () => {
         try {
             const response = await babaApi.getBabas()
             babas.value = response.data.results
+            console.log('Babas')
+            console.log(response.data.results)
         } catch (error) {
             console.log(error)
         }
