@@ -1,5 +1,6 @@
 import api from "./config";
 import type { AxiosResponse } from "axios";
+
 // ─── Enums ────────────────────────────────────────────────
 
 export enum TipoUsuario {
@@ -14,7 +15,7 @@ interface Image {
   url: string;
 }
 
-interface Usuario {
+export interface Usuario {
   id: number;
   username: string;
   first_name: string;
@@ -75,9 +76,9 @@ export const refreshTokenRequest = (
 export const createUser = (
   data: RegisterPayload
 ): Promise<AxiosResponse<RegisterResponse>> => {
-  return api.post("/register/", data);
+  return api.post("/registro/", data);
 };
 
 export const meRequest = (): Promise<AxiosResponse<Usuario>> => {
-  return api.get("/profile/");
+  return api.get("/usuarios/me/");
 };
