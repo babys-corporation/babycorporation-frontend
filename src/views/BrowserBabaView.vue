@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { Search, SlidersHorizontal } from 'lucide-vue-next';
 import BabaCard from '@/componentes/cards/BabaCard.vue';
+import ListaBabas from '@/componentes/cards/ListaBabas.vue';
 
 // Mock de dados corrigido com os campos obrigatórios para o TypeScript
 const babysitters = ref([
@@ -73,69 +74,7 @@ const limparFiltros = () => {
 </script>
 
 <template>
-  <section class="topo-busca">
-    <h1>Encontrar Babás</h1>
-    <p>{{ filteredBabysitters.length }} babás disponíveis</p>
-  </section>
-
-  <div class="container-busca">
-    <section class="filtros-lateral">
-      <div class="titulo-filtro">
-        <SlidersHorizontal :size="20" />
-        <h2>Filtros</h2>
-      </div>
-
-      <div class="campo-filtro">
-        <label>Buscar</label>
-        <div class="busca-input-wrapper">
-          <Search class="icone-busca" :size="16" />
-          <input type="text" v-model="searchTerm" placeholder="Nome, cidade, habilidade...">
-        </div>
-      </div>
-
-      <div class="campo-filtro">
-        <label>Experiência</label>
-        <select v-model="filterExperience">
-          <option value="all">Todas</option>
-          <option value="0-3">0-3 anos</option>
-          <option value="4-6">4-6 anos</option>
-          <option value="7+">7+ anos</option>
-        </select>
-      </div>
-
-      <div class="campo-filtro checkbox-wrapper">
-        <input type="checkbox" id="verified" v-model="filterVerified">
-        <label for="verified">Apenas verificadas</label>
-      </div>
-
-      <button v-if="searchTerm || filterExperience !== 'all' || filterVerified" class="inverso" @click="limparFiltros">
-        Limpar Filtros
-      </button>
-    </section>
-
-    <section class="resultados-lista">
-      <div class="ordenacao">
-        <label>Ordenar por:</label>
-        <select v-model="sortBy">
-          <option value="rating">Melhor Avaliação</option>
-          <option value="price-low">Menor Preço</option>
-          <option value="price-high">Maior Preço</option>
-          <option value="experience">Mais Experiência</option>
-        </select>
-      </div>
-
-      <div v-if="filteredBabysitters.length > 0" class="grid-babas">
-        <div v-for="baba in filteredBabysitters" :key="baba.id" class="item-baba">
-          <BabaCard :babysitter="baba" />
-        </div>
-      </div>
-
-      <div v-else class="sem-resultados">
-        <p>Nenhuma babá encontrada com os filtros selecionados.</p>
-        <button class="inverso" @click="limparFiltros">Resetar Filtros</button>
-      </div>
-    </section>
-  </div>
+  <ListaBabas/>
 </template>
 
 <style scoped>

@@ -46,7 +46,7 @@ const babas = [
 
     <div class="card responsavel">
       <div class="img-container">
-        <img src="../assets/images/crianca.png" alt="Responsavel" />
+        <img src="../assets/images/menina-balanco.png" alt="Responsavel" />
         <span class="badge">✔</span>
       </div>
       <p class="nome">Responsavel</p>
@@ -57,7 +57,7 @@ const babas = [
     <div class="grid-criancas">
       <div class="card" v-for="n in 2" :key="n">
         <div class="img-container">
-          <img src="../assets/images/crianca.png" :alt="'Criança ' + n" />
+          <img src="../assets/images/menina-balanco.png" :alt="'Criança ' + n" />
           <span class="badge">✔</span>
         </div>
         <p class="nome">Criança {{ n }}</p>

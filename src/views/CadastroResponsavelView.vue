@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const form = ref({
   nome: '', cpf: '', telefone: '', endereco: ''
@@ -10,6 +10,36 @@ const quantidadeCriancas = ref(1)
 const criancas = ref([
   { nome: '', genero: '', idade: '', alergias: '', condicoes: '' }
 ])
+
+// PASSO 5 DO PROFESSOR: Proteger os dados salvando no localStorage offline
+onMounted(() => {
+  const dadosSalvos = localStorage.getItem('rascunho_cadastro_responsavel')
+  if (dadosSalvos) {
+    form.value = JSON.parse(dadosSalvos)
+  }
+})
+
+// Fica vigiando o formulário e salva no navegador a cada letra digitada
+watch(form, (novoValor) => {
+  localStorage.setItem('rascunho_cadastro_responsavel', JSON.stringify(novoValor))
+}, { deep: true })
+
+// Controlam a quantidade de crianças sem quebrar o Vue
+const incrementarCriancas = () => {
+  quantidadeCriancas.value++
+}
+
+const diminuirCriancas = () => {
+  if (quantidadeCriancas.value > 1) {
+    quantidadeCriancas.value--
+  }
+}
+
+// Limpa o rascunho do navegador quando o cadastro finalizar com sucesso
+const finalizarCadastro = () => {
+  alert('Responsável cadastrado com sucesso!')
+  localStorage.removeItem('rascunho_cadastro_responsavel')
+}
 </script>
 
 <template>
@@ -33,8 +63,8 @@ const criancas = ref([
       <div class="contador">
         <span>{{ quantidadeCriancas }}</span>
         <div class="setas">
-          <button @click="quantidadeCriancas++">▲</button>
-          <button @click="quantidadeCriancas = Math.max(1, quantidadeCriancas - 1)">▼</button>
+          <button @click="incrementarCriancas">▲</button>
+          <button @click="diminuirCriancas">▼</button>
         </div>
       </div>
     </div>
@@ -49,7 +79,7 @@ const criancas = ref([
       <input placeholder="Condições físicas/mentais" />
     </div>
 
-    <button class="btn-cadastrar">Cadastrar responsavel</button>
+    <button @click="finalizarCadastro" class="btn-cadastrar">Cadastrar responsavel</button>
   </div>
 </template>
 
