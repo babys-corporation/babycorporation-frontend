@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { accessTokenRequest, meRequest } from '../api/auth'
 import { useAuthStore } from '../stores/auth'
 import api from '../api/config'
+
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -19,23 +20,25 @@ const mostrarSenha = ref(false)
 const entrar = async () => {
   erro.value = ''
   carregando.value = true
-
   try {
     const { data: tokens } = await accessTokenRequest({
       username: form.value.username,
       password: form.value.password
     })
-
     authStore.setTokens(tokens.access, tokens.refresh)
 
-    // Passa o token manualmente pois o config.ts não tem interceptor
     const { data: usuario } = await api.get('/usuarios/me/', {
       headers: { Authorization: `Bearer ${tokens.access}` }
     })
-
     authStore.setUsuario(usuario)
-    router.push('/')
 
+    if (usuario.tipo === 'BABA') {
+      router.push('/home-baba')
+    } else if (usuario.tipo === 'PAI') {
+      router.push('/home-familia')
+    } else {
+      router.push('/')
+    }
   } catch (e: any) {
     const status = e.response?.status
     if (status === 401) {
