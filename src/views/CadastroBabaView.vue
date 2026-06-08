@@ -122,7 +122,7 @@ const cadastrar = async () => {
     <div class="card">
       <p class="titulo">Sobre você</p>
       <div class="icone">📝</div>
-      <textarea v-model="form.sobre" placeholder="Conte mais sobre você para as famílias..." rows="4" />
+      <textarea v-model="form.descricao" placeholder="Conte mais sobre você para as famílias..." rows="4" />
     </div>
 
     <button class="btn-cadastrar" @click="cadastrar" :disabled="carregando">
