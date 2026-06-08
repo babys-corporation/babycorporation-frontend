@@ -131,17 +131,7 @@ onMounted(async() => {
   transform: translateY(-2px);
 }
 
-.foto-area {
-  position: relative;
-}
 
-.foto-area img,
-.user-default {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  background: #ddd;
-}
 
 .verificado {
   position: absolute;
@@ -208,5 +198,16 @@ font-size: 14px;
   text-align: center;
   padding: 40px;
   color: #999;
+}.foto-area {
+  position: relative;
+  height: 200px; 
+}
+
+.foto-area img,
+.user-default {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #ddd;
 }
 </style>
