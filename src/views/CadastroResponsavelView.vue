@@ -10,6 +10,8 @@ const authStore = useAuthStore()
 
 const form = ref({
   username: '',
+  first_name: '',
+  last_name: '',
   email: '',
   password: '',
   telefone: '',
@@ -50,6 +52,8 @@ const cadastrar = async () => {
     // 1. Cria o usuário
     const { data: tokens } = await createUser({
       username: form.value.username,
+      first_name: form.value.first_name,
+      last_name: form.value.last_name,
       email: form.value.email,
       password: form.value.password,
       tipo: TipoUsuario.PAI,
@@ -122,15 +126,10 @@ const cadastrar = async () => {
       <div class="icone">👤</div>
       <input v-model="form.username" placeholder="Nome de usuário" autocomplete="username" />
       <input v-model="form.email" placeholder="E-mail" type="email" autocomplete="email" />
-      <input v-model="form.password" placeholder="Senha (mínimo 8 caracteres)" type="password" autocomplete="new-password" />
+      <input v-model="form.password" placeholder="Senha (mínimo 8 caracteres)" type="password"
+        autocomplete="new-password" />
     </div>
 
-    <!-- Dados pessoais -->
-    <div class="card">
-      <p class="titulo">Dados pessoais</p>
-      <input v-model="form.telefone" placeholder="Número de telefone" type="tel" />
-      <input v-model="form.cep" placeholder="CEP" maxlength="9" />
-    </div>
 
     <button class="btn-cadastrar" @click="cadastrar" :disabled="carregando">
       {{ carregando ? 'Cadastrando...' : 'Cadastrar responsável' }}
@@ -147,16 +146,23 @@ const cadastrar = async () => {
   flex-direction: column;
   gap: 20px;
 }
+
 .hero {
   text-align: center;
   color: white;
 }
+
 .hero h1 {
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 8px;
 }
-.hero p { font-size: 14px; opacity: 0.9; }
+
+.hero p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
 .card {
   background: white;
   border-radius: 16px;
@@ -165,17 +171,21 @@ const cadastrar = async () => {
   flex-direction: column;
   gap: 10px;
 }
+
 .titulo {
   font-weight: bold;
   color: #F6339A;
   text-align: center;
   font-size: 16px;
 }
+
 .icone {
   font-size: 32px;
   text-align: center;
 }
-input, select {
+
+input,
+select {
   padding: 12px 14px;
   border: none;
   border-radius: 8px;
@@ -183,6 +193,7 @@ input, select {
   font-size: 14px;
   outline: none;
 }
+
 .btn-cadastrar {
   background: white;
   color: #F6339A;
@@ -194,16 +205,19 @@ input, select {
   cursor: pointer;
   width: 100%;
 }
+
 .btn-cadastrar:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 .sucesso {
   background: #d1fae5;
   color: #065f46;
   text-align: center;
   font-weight: bold;
 }
+
 .erro {
   background: #fee2e2;
   color: #991b1b;
