@@ -2,12 +2,10 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { createUser, TipoUsuario } from '@/api/auth'
-import { useResponsavelStore } from '@/stores/responsavel'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/api/config'
 
 const router = useRouter()
-const responsavelStore = useResponsavelStore()
 const authStore = useAuthStore()
 
 const form = ref({
@@ -15,45 +13,37 @@ const form = ref({
   email: '',
   password: '',
   telefone: '',
-  endereco: '',
+  cep: '',
 })
-
-const quantidadeCriancas = ref(1)
-
-const criancas = ref([
-  { nome: '', genero: '', idade: '', alergias: '', condicoes: '' }
-])
 
 const erro = ref('')
 const sucesso = ref(false)
 const carregando = ref(false)
 
-// Salva rascunho no localStorage
+const cepValido = (cep: string) => /^\d{5}-?\d{3}$/.test(cep)
+
+// Salva rascunho no localStorage (sem a senha, por segurança)
 onMounted(() => {
   const dadosSalvos = localStorage.getItem('rascunho_cadastro_responsavel')
   if (dadosSalvos) {
-    form.value = JSON.parse(dadosSalvos)
+    form.value = { ...form.value, ...JSON.parse(dadosSalvos) }
   }
 })
 
 watch(form, (novoValor) => {
-  localStorage.setItem('rascunho_cadastro_responsavel', JSON.stringify(novoValor))
+  const { password, ...rascunho } = novoValor
+  localStorage.setItem('rascunho_cadastro_responsavel', JSON.stringify(rascunho))
 }, { deep: true })
-
-const incrementarCriancas = () => {
-  quantidadeCriancas.value++
-  criancas.value.push({ nome: '', genero: '', idade: '', alergias: '', condicoes: '' })
-}
-
-const diminuirCriancas = () => {
-  if (quantidadeCriancas.value > 1) {
-    quantidadeCriancas.value--
-    criancas.value.pop()
-  }
-}
 
 const cadastrar = async () => {
   erro.value = ''
+
+  // Validação do CEP antes de qualquer chamada à API
+  if (form.value.cep && !cepValido(form.value.cep)) {
+    erro.value = 'CEP inválido. Use o formato 00000-000.'
+    return
+  }
+
   carregando.value = true
 
   try {
@@ -68,15 +58,25 @@ const cadastrar = async () => {
     // 2. Salva os tokens no store
     authStore.setTokens(tokens.access, tokens.refresh)
 
-    // 3. Cria o perfil de responsável usando o token recém obtido
-    await api.post('/perfil-pai/', {
-      endereco: form.value.endereco,
-      numero_filhos: quantidadeCriancas.value,
-    }, {
-      headers: { Authorization: `Bearer ${tokens.access}` }
-    })
+    const authHeaders = { headers: { Authorization: `Bearer ${tokens.access}` } }
 
-    // 4. Limpa rascunho e redireciona
+    // 3. Cria o perfil de responsável
+    await api.post('/perfil-pai/', {}, authHeaders)
+
+    // 4. Atualiza telefone e CEP no usuário (campos existem em Usuario, não em PerfilPai)
+    if (form.value.telefone || form.value.cep) {
+      const payloadUsuario: Record<string, string> = {}
+      if (form.value.telefone) payloadUsuario.telefone = form.value.telefone
+      if (form.value.cep) payloadUsuario.cep = form.value.cep
+
+      if (!tokens.id) {
+        console.error('Resposta de createUser não contém "id" do usuário.')
+      } else {
+        await api.patch(`/usuarios/${tokens.id}/`, payloadUsuario, authHeaders)
+      }
+    }
+
+    // 5. Limpa rascunho e redireciona
     localStorage.removeItem('rascunho_cadastro_responsavel')
     sucesso.value = true
 
@@ -90,6 +90,8 @@ const cadastrar = async () => {
       erro.value = 'E-mail já cadastrado.'
     } else if (data?.password) {
       erro.value = 'Senha muito fraca. Use pelo menos 8 caracteres.'
+    } else if (data?.cep) {
+      erro.value = Array.isArray(data.cep) ? data.cep[0] : 'CEP inválido.'
     } else {
       erro.value = data?.detail || 'Erro ao cadastrar. Tente novamente.'
     }
@@ -127,30 +129,7 @@ const cadastrar = async () => {
     <div class="card">
       <p class="titulo">Dados pessoais</p>
       <input v-model="form.telefone" placeholder="Número de telefone" type="tel" />
-      <input v-model="form.endereco" placeholder="Endereço" />
-    </div>
-
-    <!-- Quantidade de crianças -->
-    <div class="card quantidade">
-      <span>Quantas crianças você tem?</span>
-      <div class="contador">
-        <span>{{ quantidadeCriancas }}</span>
-        <div class="setas">
-          <button @click="incrementarCriancas">▲</button>
-          <button @click="diminuirCriancas">▼</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card de cada criança -->
-    <div v-for="(crianca, index) in criancas" :key="index" class="card">
-      <p class="titulo">Criança {{ index + 1 }}</p>
-      <div class="icone">👶</div>
-      <input v-model="crianca.nome" placeholder="Nome da criança" />
-      <input v-model="crianca.genero" placeholder="Gênero" />
-      <input v-model="crianca.idade" placeholder="Idade" type="number" min="0" />
-      <input v-model="crianca.alergias" placeholder="Alergias" />
-      <input v-model="crianca.condicoes" placeholder="Condições físicas/mentais" />
+      <input v-model="form.cep" placeholder="CEP" maxlength="9" />
     </div>
 
     <button class="btn-cadastrar" @click="cadastrar" :disabled="carregando">
@@ -196,35 +175,13 @@ const cadastrar = async () => {
   font-size: 32px;
   text-align: center;
 }
-input {
+input, select {
   padding: 12px 14px;
   border: none;
   border-radius: 8px;
   background: #F3F4F6;
   font-size: 14px;
   outline: none;
-}
-.quantidade {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-.quantidade span { font-size: 14px; }
-.contador {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.setas {
-  display: flex;
-  flex-direction: column;
-}
-.setas button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-  padding: 0;
 }
 .btn-cadastrar {
   background: white;
