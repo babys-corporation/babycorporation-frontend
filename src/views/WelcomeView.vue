@@ -28,6 +28,10 @@ const navegarParaBusca = () => {
 const navegarParaCadastro = () => {
   router.push('/cadastro-responsavel');
 };
+const navegarParaCadastrobaba =  () =>{
+    router.push('/cadastro-baba');
+};
+
 </script>
 
 <template>
@@ -41,7 +45,7 @@ const navegarParaCadastro = () => {
             <button @click="navegarParaBusca">
                 Encontrar Babás
             </button>
-            <button class="inverso" @click="navegarParaCadastro">
+            <button class="inverso" @click="navegarParaCadastrobaba">
                 Cadastrar como Babá
             </button>
         </div>

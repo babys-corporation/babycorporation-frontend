@@ -10,6 +10,8 @@ import CalendarioView from '@/views/CalendarioView.vue'
 import AgendamentoView from '@/views/AgendamentoView.vue'
 import BabasDetalhesView from '@/views/BabasDetalhesView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
+import LoginView from '@/views/LoginView.vue'
+
 
 const routes = [
   {
@@ -70,7 +72,12 @@ const routes = [
     path: '/:pathMatch(.*)*',
     name: 'notfound',
     component: NotFoundView,
-  }
+  },
+  
+  {
+  path: '/login',
+  component: LoginView
+}
 ]
 
 const router = createRouter({

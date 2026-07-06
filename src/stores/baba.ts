@@ -41,16 +41,17 @@ export const useBabaStore = defineStore('babaStore', () => {
     async function getBabas() {
         try {
             const response = await babaApi.getBabas()
-            babas.value = response.data.results
+            babas.value = response.data.results ?? response.data
             console.log('Babas')
             console.log(response.data.results)
         } catch (error) {
             console.log(error)
         }
-    }
+    }   
 
     return {
         babas,
         getBabas
     }
-})
+}
+)

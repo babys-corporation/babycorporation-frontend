@@ -37,12 +37,13 @@ interface LoginPayload {
 
 interface RegisterPayload {
   username: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
   tipo: TipoUsuario;
   foto_attachment_key?: string;
 }
-
 // ─── Respostas ────────────────────────────────────────────
 
 interface TokenResponse {
@@ -53,12 +54,13 @@ interface TokenResponse {
 interface RegisterResponse {
   id: number;
   username: string;
+  first_name: string;
+  last_name: string;
   email: string;
   tipo: TipoUsuario;
   access: string;
   refresh: string;
 }
-
 // ─── Requests ─────────────────────────────────────────────
 
 export const accessTokenRequest = (

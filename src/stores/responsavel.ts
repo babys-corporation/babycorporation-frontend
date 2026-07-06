@@ -1,33 +1,48 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import * as babaApi from '@/api/babaApi'
+import * as responsavelApi from '@/api/responsavelApi'
 
+interface ResponsavelInterface {
+  id: number
+  usuario: number
+  numero_filhos: number
+  endereco: string
+}
 
-interface responsavelinterface{
- id: number,
-    usuario: {
-        id: number,
-        numero_filhos: number,
-        endereco: string
-    }}
+export const useResponsavelStore = defineStore('responsavelStore', () => {
+  const responsavel = ref<ResponsavelInterface | null>(null)
+  const carregando = ref(false)
+  const erro = ref('')
 
-    export const  useBabaStore =defineStore('babastore', () => {
+  async function createResponsavel(dados: object) {
+    carregando.value = true
+    erro.value = ''
+    try {
+      const response = await responsavelApi.createResponsavel(dados)
+      responsavel.value = response.data
+      return response.data
+    } catch (error: any) {
+      erro.value = error.response?.data?.detail || 'Erro ao cadastrar responsável.'
+      throw error
+    } finally {
+      carregando.value = false
+    }
+  }
 
-        const responsavel = ref<responsavelinterface[]>([])
+  async function getResponsavel(id: number) {
+    try {
+      const response = await responsavelApi.getResponsavel(id)
+      responsavel.value = response.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-         async function getBabas() {
-               try {
-                   const response = await babaApi.getBabas()
-                   responsavel.value = response.data.results
-                   console.log('Responsavel')
-                   console.log(response.data.results)
-               } catch (error) {
-                   console.log(error)
-               }
-           }
-       
-           return {
-               responsavel,
-               getBabas
-           }
-       })
+  return {
+    responsavel,
+    carregando,
+    erro,
+    createResponsavel,
+    getResponsavel,
+  }
+})
