@@ -124,10 +124,16 @@ const cadastrar = async () => {
     <div class="card">
       <p class="titulo">Criar conta</p>
       <div class="icone">👤</div>
-      <input v-model="form.username" placeholder="Nome de usuário" autocomplete="username" />
       <input v-model="form.email" placeholder="E-mail" type="email" autocomplete="email" />
       <input v-model="form.password" placeholder="Senha (mínimo 8 caracteres)" type="password"
         autocomplete="new-password" />
+
+        <label for="tipo">Tipo de usuário:</label>
+
+<select id="tipo" name="tipo">
+    <option value="PAI">Pai</option>
+    <option value="BABA">Babá</option>
+</select>
     </div>
 
 
@@ -222,5 +228,14 @@ select {
   background: #fee2e2;
   color: #991b1b;
   text-align: center;
+}
+
+label{
+  color: #F6339A;
+  font-weight: bold;
+}
+select{
+  color: #8b5cf6;
+
 }
 </style>

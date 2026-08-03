@@ -45,9 +45,6 @@ const navegarParaCadastrobaba =  () =>{
             <button @click="navegarParaBusca">
                 Encontrar Babás
             </button>
-            <button class="inverso" @click="navegarParaCadastrobaba">
-                Cadastrar como Babá
-            </button>
         </div>
     </section>
 

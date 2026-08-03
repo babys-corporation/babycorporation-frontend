@@ -80,24 +80,6 @@ const cadastrar = async () => {
       <div class="icone">👤</div>
 
       <input
-        v-model="form.username"
-        placeholder="Nome de usuário"
-        autocomplete="username"
-      />
-
-      <input
-        v-model="form.first_name"
-        placeholder="Primeiro nome"
-        autocomplete="given-name"
-      />
-
-      <input
-        v-model="form.last_name"
-        placeholder="Sobrenome"
-        autocomplete="family-name"
-      />
-
-      <input
         v-model="form.email"
         type="email"
         placeholder="E-mail"
@@ -110,26 +92,19 @@ const cadastrar = async () => {
         placeholder="Senha (mínimo 8 caracteres)"
         autocomplete="new-password"
       />
+
+      <label for="tipo">Tipo de usuário:</label>
+
+<select id="tipo" name="tipo">
+    <option value="PAI">Pai</option>
+    <option value="BABA">Babá</option>
+</select>
+      
+
     </div>
 
-    <div class="card">
-      <p class="titulo">Sobre você</p>
-
-      <div class="icone">📝</div>
-
-      <input
-        v-model="form.experiencia_anos"
-        type="number"
-        min="0"
-        placeholder="Anos de experiência"
-      />
-
-      <textarea
-        v-model="form.descricao"
-        rows="4"
-        placeholder="Conte um pouco sobre você para as famílias..."
-      />
-    </div>
+    
+    
 
     <button
       class="btn-cadastrar"
