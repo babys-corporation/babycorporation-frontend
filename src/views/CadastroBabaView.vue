@@ -1,3 +1,4 @@
+```vue
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -6,13 +7,8 @@ import { createUser, TipoUsuario } from '@/api/auth'
 const router = useRouter()
 
 const form = ref({
-  username: '',
-  first_name: '',
-  last_name: '',
   email: '',
   password: '',
-  experiencia_anos: '',
-  descricao: '',
 })
 
 const erro = ref('')
@@ -27,9 +23,6 @@ const cadastrar = async () => {
     // Cria o usuário.
     // O PerfilBaba é criado automaticamente pelo signal do Django.
     await createUser({
-      username: form.value.username,
-      first_name: form.value.first_name,
-      last_name: form.value.last_name,
       email: form.value.email,
       password: form.value.password,
       tipo: TipoUsuario.BABA,
@@ -40,13 +33,10 @@ const cadastrar = async () => {
     setTimeout(() => {
       router.push('/login')
     }, 1500)
-
   } catch (e: any) {
     const data = e.response?.data
 
-    if (data?.username) {
-      erro.value = 'Nome de usuário já existe.'
-    } else if (data?.email) {
+    if (data?.email) {
       erro.value = 'E-mail já cadastrado.'
     } else if (data?.password) {
       erro.value = 'Senha muito fraca. Use pelo menos 8 caracteres.'
@@ -93,26 +83,18 @@ const cadastrar = async () => {
         autocomplete="new-password"
       />
 
-      <label for="tipo">Tipo de usuário:</label>
+      <p class="tipo-usuario">
+        Tipo de usuário: <strong>Babá</strong>
+      </p>
 
-<select id="tipo" name="tipo">
-    <option value="PAI">Pai</option>
-    <option value="BABA">Babá</option>
-</select>
-      
-
+      <button
+        class="btn-cadastrar"
+        @click="cadastrar"
+        :disabled="carregando"
+      >
+        {{ carregando ? 'Cadastrando...' : 'Cadastrar babá' }}
+      </button>
     </div>
-
-    
-    
-
-    <button
-      class="btn-cadastrar"
-      @click="cadastrar"
-      :disabled="carregando"
-    >
-      {{ carregando ? 'Cadastrando...' : 'Cadastrar babá' }}
-    </button>
   </div>
 </template>
 
@@ -163,6 +145,12 @@ const cadastrar = async () => {
   font-size: 32px;
 }
 
+.tipo-usuario {
+  text-align: center;
+  color: #374151;
+  font-size: 14px;
+}
+
 input,
 textarea {
   padding: 12px 14px;
@@ -208,3 +196,4 @@ textarea {
   text-align: center;
 }
 </style>
+```
