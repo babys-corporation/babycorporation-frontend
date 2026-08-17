@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { accessTokenRequest, meRequest } from '../api/auth'
-import { useAuthStore } from '../stores/auth'
-import api from '../api/config'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { accessTokenRequest } from '../api/auth';
+import { useAuthStore } from '../stores/auth';
+
+
+import api from '../api/config';
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 const form = ref({
-  username: '',
+  email: '',
   password: ''
 })
 
@@ -20,31 +22,37 @@ const mostrarSenha = ref(false)
 const entrar = async () => {
   erro.value = ''
   carregando.value = true
+
   try {
     const { data: tokens } = await accessTokenRequest({
-      username: form.value.username,
+      email: form.value.email,
       password: form.value.password
     })
+
     authStore.setTokens(tokens.access, tokens.refresh)
 
     const { data: usuario } = await api.get('/usuarios/me/', {
-      headers: { Authorization: `Bearer ${tokens.access}` }
+      headers: {
+        Authorization: `Bearer ${tokens.access}`
+      }
     })
+
     authStore.setUsuario(usuario)
 
-    if (usuario.tipo === 'BABA') {
+    if (usuario.tipo?.toUpperCase() === 'BABA') {
       router.push('/home-baba')
-    } else if (usuario.tipo === 'PAI') {
-      router.push('/home-familia')
     } else {
-      router.push('/')
+      router.push('/home-familia')
     }
   } catch (e: any) {
     const status = e.response?.status
+
     if (status === 401) {
-      erro.value = 'Usuário ou senha inválidos.'
+      erro.value = 'E-mail ou senha inválidos.'
     } else {
-      erro.value = e.response?.data?.detail || 'Erro ao entrar. Tente novamente.'
+      erro.value =
+        e.response?.data?.detail ||
+        'Erro ao entrar. Tente novamente.'
     }
   } finally {
     carregando.value = false
@@ -52,7 +60,7 @@ const entrar = async () => {
 }
 
 const irParaCadastro = () => {
-  router.push('/cadastro')
+  router.push('/cadastro-baba')
 }
 </script>
 
@@ -60,8 +68,12 @@ const irParaCadastro = () => {
   <div class="pagina">
     <div class="hero">
       <div class="logo">👶</div>
+
       <h1>Bem-vindo de volta!</h1>
-      <p>Entre na sua conta e encontre a babá ideal</p>
+
+      <p>
+        Entre na sua conta e encontre a babá ideal
+      </p>
     </div>
 
     <div v-if="erro" class="card erro">
@@ -69,18 +81,26 @@ const irParaCadastro = () => {
     </div>
 
     <div class="card">
-      <p class="titulo">Entrar na conta</p>
-      <div class="icone">🔐</div>
+      <p class="titulo">
+        Entrar na conta
+      </p>
 
+      <div class="icone">
+        🔐
+      </div>
+
+      <!-- E-mail -->
       <div class="campo">
         <input
-          v-model="form.username"
-          placeholder="Nome de usuário"
-          autocomplete="username"
+          v-model="form.email"
+          placeholder="E-mail"
+          type="email"
+          autocomplete="email"
           @keyup.enter="entrar"
         />
       </div>
 
+      <!-- Senha -->
       <div class="campo campo-senha">
         <input
           v-model="form.password"
@@ -89,28 +109,47 @@ const irParaCadastro = () => {
           autocomplete="current-password"
           @keyup.enter="entrar"
         />
+
         <button
           class="toggle-senha"
           type="button"
           @click="mostrarSenha = !mostrarSenha"
-          :aria-label="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'"
+          :aria-label="
+            mostrarSenha
+              ? 'Ocultar senha'
+              : 'Mostrar senha'
+          "
         >
           {{ mostrarSenha ? '🙈' : '👁️' }}
         </button>
       </div>
 
-      <button class="btn-link" type="button">
+      <button
+        class="btn-link"
+        type="button"
+      >
         Esqueci minha senha
       </button>
     </div>
 
-    <button class="btn-entrar" @click="entrar" :disabled="carregando">
+    <button
+      class="btn-entrar"
+      @click="entrar"
+      :disabled="carregando"
+    >
       {{ carregando ? 'Entrando...' : 'Entrar' }}
     </button>
 
     <div class="rodape">
-      <p>Não tem uma conta?</p>
-      <button class="btn-cadastro" type="button" @click="irParaCadastro">
+      <p>
+        Não tem uma conta?
+      </p>
+
+      <button
+        class="btn-cadastro"
+        type="button"
+        @click="irParaCadastro"
+      >
         Criar conta gratuita
       </button>
     </div>
@@ -125,6 +164,7 @@ const irParaCadastro = () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  text-decoration: none;
 }
 
 .hero {

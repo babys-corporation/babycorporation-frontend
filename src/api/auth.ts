@@ -17,7 +17,6 @@ interface Image {
 
 export interface Usuario {
   id: number;
-  username: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -31,19 +30,17 @@ export interface Usuario {
 // ─── Payloads ─────────────────────────────────────────────
 
 interface LoginPayload {
-  username: string;
+  email: string;
   password: string;
 }
 
 interface RegisterPayload {
-  username: string;
-  first_name: string;
-  last_name: string;
   email: string;
   password: string;
   tipo: TipoUsuario;
   foto_attachment_key?: string;
 }
+
 // ─── Respostas ────────────────────────────────────────────
 
 interface TokenResponse {
@@ -53,14 +50,12 @@ interface TokenResponse {
 
 interface RegisterResponse {
   id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
   email: string;
   tipo: TipoUsuario;
   access: string;
   refresh: string;
 }
+
 // ─── Requests ─────────────────────────────────────────────
 
 export const accessTokenRequest = (
@@ -84,3 +79,4 @@ export const createUser = (
 export const meRequest = (): Promise<AxiosResponse<Usuario>> => {
   return api.get("/usuarios/me/");
 };
+

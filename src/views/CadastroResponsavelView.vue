@@ -1,92 +1,170 @@
-<script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+<template>
+  <!-- Mensagem de sucesso -->
+  <div v-if="sucesso" class="card sucesso">
+     Cadastro realizado! Entrando automaticamente...
+  </div>
+
+  <!-- Mensagem de erro -->
+  <div v-if="erro" class="card erro">
+    {{ erro }}
+  </div>
+
+  <!-- Dados de acesso -->
+  <div class="card">
+    <p class="titulo">Criar conta</p>
+
+    <div class="icone">imagem</div>
+
+    <!-- E-mail -->
+    <input
+      v-model="form.email"
+      placeholder="E-mail"
+      type="email"
+      autocomplete="email"
+      :disabled="carregando"
+    />
+
+    <!-- Senha -->
+    <input
+      v-model="form.password"
+      placeholder="Senha (mínimo 8 caracteres)"
+      type="password"
+      autocomplete="new-password"
+      minlength="8"
+      :disabled="carregando"
+    />
+
+    <!-- Tipo de usuário -->
+    <label for="tipo">Tipo de usuário:</label>
+
+    <select
+      id="tipo"
+      v-model="form.tipo"
+      :disabled="carregando"
+    >
+      <option value="" disabled>
+        Selecione o tipo de usuário
+      </option>
+
+      <option value="PAI">
+        Responsável
+      </option>
+
+      <option value="BABA">
+        Babá
+      </option>
+    </select>
+
+    <!-- Confirmar senha -->
+    <input
+      v-model="form.confirmPassword"
+      placeholder="Confirme sua senha"
+      type="password"
+      autocomplete="new-password"
+      minlength="8"
+      :disabled="carregando"
+    />
+
+    <!-- Botão -->
+    <button
+      class="btn-cadastrar"
+      @click="cadastrar"
+      :disabled="carregando"
+    >
+      {{ carregando ? 'Cadastrando...' : 'Cadastrar' }}
+    </button>
+  </div>
+</template>
+
+
+<script setup>
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { createUser, TipoUsuario } from '@/api/auth'
-import { useResponsavelStore } from '@/stores/responsavel'
+import { createUser, accessTokenRequest } from '@/api/auth'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/api/config'
 
 const router = useRouter()
-const responsavelStore = useResponsavelStore()
 const authStore = useAuthStore()
 
-const form = ref({
-  username: '',
+const form = reactive({
   email: '',
   password: '',
-  telefone: '',
-  endereco: '',
+  confirmPassword: '',
+  tipo: ''
 })
 
-const quantidadeCriancas = ref(1)
-
-const criancas = ref([
-  { nome: '', genero: '', idade: '', alergias: '', condicoes: '' }
-])
-
-const erro = ref('')
 const sucesso = ref(false)
+const erro = ref('')
 const carregando = ref(false)
 
-// Salva rascunho no localStorage
-onMounted(() => {
-  const dadosSalvos = localStorage.getItem('rascunho_cadastro_responsavel')
-  if (dadosSalvos) {
-    form.value = JSON.parse(dadosSalvos)
-  }
-})
-
-watch(form, (novoValor) => {
-  localStorage.setItem('rascunho_cadastro_responsavel', JSON.stringify(novoValor))
-}, { deep: true })
-
-const incrementarCriancas = () => {
-  quantidadeCriancas.value++
-  criancas.value.push({ nome: '', genero: '', idade: '', alergias: '', condicoes: '' })
-}
-
-const diminuirCriancas = () => {
-  if (quantidadeCriancas.value > 1) {
-    quantidadeCriancas.value--
-    criancas.value.pop()
-  }
-}
-
-const cadastrar = async () => {
+async function cadastrar() {
   erro.value = ''
+  sucesso.value = false
+
+  if (!form.email) {
+    erro.value = 'Digite seu e-mail.'
+    return
+  }
+
+  if (!form.password) {
+    erro.value = 'Digite uma senha.'
+    return
+  }
+
+  if (form.password.length < 8) {
+    erro.value = 'A senha deve ter pelo menos 8 caracteres.'
+    return
+  }
+
+  if (form.password !== form.confirmPassword) {
+    erro.value = 'As senhas não são iguais.'
+    return
+  }
+
+  if (!form.tipo) {
+    erro.value = 'Selecione o tipo de usuário.'
+    return
+  }
+
   carregando.value = true
 
   try {
-    // 1. Cria o usuário
-    const { data: tokens } = await createUser({
-      username: form.value.username,
-      email: form.value.email,
-      password: form.value.password,
-      tipo: TipoUsuario.PAI,
+    await createUser({
+      email: form.email,
+      password: form.password,
+      tipo: form.tipo,
     })
 
-    // 2. Salva os tokens no store
+    const { data: tokens } = await accessTokenRequest({
+      email: form.email,
+      password: form.password,
+    })
+
     authStore.setTokens(tokens.access, tokens.refresh)
 
-    // 3. Cria o perfil de responsável usando o token recém obtido
-    await api.post('/perfil-pai/', {
-      endereco: form.value.endereco,
-      numero_filhos: quantidadeCriancas.value,
-    }, {
-      headers: { Authorization: `Bearer ${tokens.access}` }
+    const { data: usuario } = await api.get('/usuarios/me/', {
+      headers: {
+        Authorization: `Bearer ${tokens.access}`
+      }
     })
 
-    // 4. Limpa rascunho e redireciona
-    localStorage.removeItem('rascunho_cadastro_responsavel')
+    authStore.setUsuario(usuario)
+
     sucesso.value = true
 
-    setTimeout(() => router.push('/login'), 1500)
+    setTimeout(() => {
+      if (usuario.tipo?.toUpperCase() === 'BABA') {
+        router.push('/home-baba')
+      } else {
+        router.push('/home-familia')
+      }
+    }, 1500)
 
-  } catch (e: any) {
+  } catch (e) {
     const data = e.response?.data
-    if (data?.username) {
-      erro.value = 'Nome de usuário já existe.'
-    } else if (data?.email) {
+
+    if (data?.email) {
       erro.value = 'E-mail já cadastrado.'
     } else if (data?.password) {
       erro.value = 'Senha muito fraca. Use pelo menos 8 caracteres.'
@@ -99,157 +177,68 @@ const cadastrar = async () => {
 }
 </script>
 
-<template>
-  <div class="pagina">
-    <div class="hero">
-      <h1>Pronta para começar?</h1>
-      <p>Cadastre-se agora e encontre a babá perfeita para sua família</p>
-    </div>
-
-    <div v-if="sucesso" class="card sucesso">
-      ✅ Cadastro realizado! Redirecionando para o login...
-    </div>
-
-    <div v-if="erro" class="card erro">
-      ⚠️ {{ erro }}
-    </div>
-
-    <!-- Dados de acesso -->
-    <div class="card">
-      <p class="titulo">Criar conta</p>
-      <div class="icone">👤</div>
-      <input v-model="form.username" placeholder="Nome de usuário" autocomplete="username" />
-      <input v-model="form.email" placeholder="E-mail" type="email" autocomplete="email" />
-      <input v-model="form.password" placeholder="Senha (mínimo 8 caracteres)" type="password" autocomplete="new-password" />
-    </div>
-
-    <!-- Dados pessoais -->
-    <div class="card">
-      <p class="titulo">Dados pessoais</p>
-      <input v-model="form.telefone" placeholder="Número de telefone" type="tel" />
-      <input v-model="form.endereco" placeholder="Endereço" />
-    </div>
-
-    <!-- Quantidade de crianças -->
-    <div class="card quantidade">
-      <span>Quantas crianças você tem?</span>
-      <div class="contador">
-        <span>{{ quantidadeCriancas }}</span>
-        <div class="setas">
-          <button @click="incrementarCriancas">▲</button>
-          <button @click="diminuirCriancas">▼</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card de cada criança -->
-    <div v-for="(crianca, index) in criancas" :key="index" class="card">
-      <p class="titulo">Criança {{ index + 1 }}</p>
-      <div class="icone">👶</div>
-      <input v-model="crianca.nome" placeholder="Nome da criança" />
-      <input v-model="crianca.genero" placeholder="Gênero" />
-      <input v-model="crianca.idade" placeholder="Idade" type="number" min="0" />
-      <input v-model="crianca.alergias" placeholder="Alergias" />
-      <input v-model="crianca.condicoes" placeholder="Condições físicas/mentais" />
-    </div>
-
-    <button class="btn-cadastrar" @click="cadastrar" :disabled="carregando">
-      {{ carregando ? 'Cadastrando...' : 'Cadastrar responsável' }}
-    </button>
-  </div>
-</template>
 
 <style scoped>
-.pagina {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #ff2f92, #8b5cf6);
-  padding: 24px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.hero {
-  text-align: center;
-  color: white;
-}
-.hero h1 {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-.hero p { font-size: 14px; opacity: 0.9; }
+
 .card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.titulo {
-  font-weight: bold;
-  color: #F6339A;
-  text-align: center;
-  font-size: 16px;
-}
-.icone {
-  font-size: 32px;
-  text-align: center;
-}
-input {
-  padding: 12px 14px;
-  border: none;
-  border-radius: 8px;
-  background: #F3F4F6;
-  font-size: 14px;
-  outline: none;
-}
-.quantidade {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-.quantidade span { font-size: 14px; }
-.contador {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.setas {
-  display: flex;
-  flex-direction: column;
-}
-.setas button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-  padding: 0;
-}
-.btn-cadastrar {
-  background: white;
-  color: #F6339A;
-  border: none;
-  border-radius: 12px;
-  padding: 16px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
   width: 100%;
+  max-width: 400px;
+  margin: 15px auto;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 10px;
 }
+
+.titulo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.icone {
+  text-align: center;
+  font-size: 45px;
+  margin-bottom: 15px;
+}
+
+input,
+select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.btn-cadastrar {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 .btn-cadastrar:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 .sucesso {
-  background: #d1fae5;
-  color: #065f46;
   text-align: center;
-  font-weight: bold;
 }
+
 .erro {
-  background: #fee2e2;
-  color: #991b1b;
   text-align: center;
 }
+
 </style>
