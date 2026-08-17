@@ -39,7 +39,7 @@ const navegarPara = (rota: string) => {
 
       <div class="acoes-desktop">
         <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
-        <button class="btn-solido" @click="navegarPara('/cadastro-responsavel')">Cadastre-se</button>
+        <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
       </div>
 
       <!-- Botão hamburguer (mobile) -->
@@ -58,7 +58,7 @@ const navegarPara = (rota: string) => {
         <a @click="navegarPara('/CalendarioView')">Calendario</a>
         <hr />
         <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
-        <button class="btn-solido" @click="navegarPara('/cadastro-responsavel')">Cadastre-se</button>
+        <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
       </nav>
     </transition>
 

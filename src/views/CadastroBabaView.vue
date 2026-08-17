@@ -1,14 +1,17 @@
-```vue
 <script setup lang="ts">
+import { createUser, TipoUsuario, accessTokenRequest } from '@/api/auth'
+import { useAuthStore } from '@/stores/auth'
+import api from '@/api/config'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { createUser, TipoUsuario } from '@/api/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const form = ref({
   email: '',
   password: '',
+  tipo: TipoUsuario.PAI,
 })
 
 const erro = ref('')
@@ -20,18 +23,35 @@ const cadastrar = async () => {
   carregando.value = true
 
   try {
-    // Cria o usuário.
-    // O PerfilBaba é criado automaticamente pelo signal do Django.
     await createUser({
       email: form.value.email,
       password: form.value.password,
-      tipo: TipoUsuario.BABA,
+      tipo: form.value.tipo,
     })
+
+    const { data: tokens } = await accessTokenRequest({
+      email: form.value.email,
+      password: form.value.password,
+    })
+
+    authStore.setTokens(tokens.access, tokens.refresh)
+
+    const { data: usuario } = await api.get('/usuarios/me/', {
+      headers: {
+        Authorization: `Bearer ${tokens.access}`
+      }
+    })
+
+    authStore.setUsuario(usuario)
 
     sucesso.value = true
 
     setTimeout(() => {
-      router.push('/login')
+      if (usuario.tipo?.toUpperCase() === 'BABA') {
+        router.push('/home-baba')
+      } else {
+        router.push('/home-familia')
+      }
     }, 1500)
   } catch (e: any) {
     const data = e.response?.data
@@ -53,11 +73,11 @@ const cadastrar = async () => {
   <div class="pagina">
     <div class="hero">
       <h1>Pronta para começar?</h1>
-      <p>Cadastre-se agora e seja a babá perfeita para uma família</p>
+      <p>Cadastre-se agora e encontre ou seja a babá perfeita</p>
     </div>
 
     <div v-if="sucesso" class="card sucesso">
-      ✅ Cadastro realizado! Redirecionando para o login...
+      ✅ Cadastro realizado! Redirecionando...
     </div>
 
     <div v-if="erro" class="card erro">
@@ -83,16 +103,18 @@ const cadastrar = async () => {
         autocomplete="new-password"
       />
 
-      <p class="tipo-usuario">
-        Tipo de usuário: <strong>Babá</strong>
-      </p>
+      <label for="tipo" class="label-tipo">Tipo de usuário:</label>
+      <select id="tipo" v-model="form.tipo">
+        <option :value="TipoUsuario.PAI">Pai/Mãe</option>
+        <option :value="TipoUsuario.BABA">Babá</option>
+      </select>
 
       <button
         class="btn-cadastrar"
         @click="cadastrar"
         :disabled="carregando"
       >
-        {{ carregando ? 'Cadastrando...' : 'Cadastrar babá' }}
+        {{ carregando ? 'Cadastrando...' : 'Cadastrar' }}
       </button>
     </div>
   </div>
@@ -145,13 +167,14 @@ const cadastrar = async () => {
   font-size: 32px;
 }
 
-.tipo-usuario {
-  text-align: center;
-  color: #374151;
+.label-tipo {
+  color: #F6339A;
+  font-weight: bold;
   font-size: 14px;
 }
 
 input,
+select,
 textarea {
   padding: 12px 14px;
   border: none;
@@ -160,6 +183,10 @@ textarea {
   font-size: 14px;
   outline: none;
   font-family: inherit;
+}
+
+select {
+  color: #8b5cf6;
 }
 
 textarea {
@@ -196,4 +223,3 @@ textarea {
   text-align: center;
 }
 </style>
-```

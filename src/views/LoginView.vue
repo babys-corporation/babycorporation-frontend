@@ -1,11 +1,11 @@
-```vue
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { accessTokenRequest } from '../api/auth'
-import { useAuthStore } from '../stores/auth'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { accessTokenRequest } from '../api/auth';
+import { useAuthStore } from '../stores/auth';
 
-import api from '../api/config'
+
+import api from '../api/config';
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -39,12 +39,10 @@ const entrar = async () => {
 
     authStore.setUsuario(usuario)
 
-    if (usuario.tipo === 'BABA') {
+    if (usuario.tipo?.toUpperCase() === 'BABA') {
       router.push('/home-baba')
-    } else if (usuario.tipo === 'PAI') {
-      router.push('/home-familia')
     } else {
-      router.push('/')
+      router.push('/home-familia')
     }
   } catch (e: any) {
     const status = e.response?.status
@@ -62,7 +60,7 @@ const entrar = async () => {
 }
 
 const irParaCadastro = () => {
-  router.push('/cadastro')
+  router.push('/cadastro-baba')
 }
 </script>
 
@@ -166,6 +164,7 @@ const irParaCadastro = () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  text-decoration: none;
 }
 
 .hero {
@@ -316,4 +315,3 @@ const irParaCadastro = () => {
   border-radius: 16px;
 }
 </style>
-```

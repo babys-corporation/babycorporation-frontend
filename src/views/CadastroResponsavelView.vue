@@ -1,4 +1,3 @@
-```vue
 <template>
   <!-- Mensagem de sucesso -->
   <div v-if="sucesso" class="card sucesso">
@@ -81,13 +80,13 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { createUser, accessTokenRequest } from '@/api/auth'
+import { useAuthStore } from '@/stores/auth'
+import api from '@/api/config'
 
-
-// Router
 const router = useRouter()
+const authStore = useAuthStore()
 
-
-// Formulário
 const form = reactive({
   email: '',
   password: '',
@@ -95,134 +94,83 @@ const form = reactive({
   tipo: ''
 })
 
-
-// Estados da tela
 const sucesso = ref(false)
 const erro = ref('')
 const carregando = ref(false)
 
-
-// URL da API
-const API_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/api\/?$/, '') || 'http://127.0.0.1:8000'
-
-// Função de cadastro
 async function cadastrar() {
-  // Limpa mensagens anteriores
   erro.value = ''
   sucesso.value = false
 
-
-  // Verifica e-mail
   if (!form.email) {
     erro.value = 'Digite seu e-mail.'
     return
   }
 
-
-  // Verifica senha
   if (!form.password) {
     erro.value = 'Digite uma senha.'
     return
   }
 
-
-  // Verifica tamanho da senha
   if (form.password.length < 8) {
     erro.value = 'A senha deve ter pelo menos 8 caracteres.'
     return
   }
 
-
-  // Verifica confirmação da senha
   if (form.password !== form.confirmPassword) {
     erro.value = 'As senhas não são iguais.'
     return
   }
 
-
-  // Verifica tipo de usuário
   if (!form.tipo) {
     erro.value = 'Selecione o tipo de usuário.'
     return
   }
 
-
-  // Começa carregamento
   carregando.value = true
 
-
   try {
-    const resposta = await fetch(
-    `${API_URL}/api/registro/`,
-      {
+    await createUser({
+      email: form.email,
+      password: form.password,
+      tipo: form.tipo,
+    })
 
-        method: 'POST',
+    const { data: tokens } = await accessTokenRequest({
+      email: form.email,
+      password: form.password,
+    })
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
+    authStore.setTokens(tokens.access, tokens.refresh)
 
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-          tipo: form.tipo
-        })
+    const { data: usuario } = await api.get('/usuarios/me/', {
+      headers: {
+        Authorization: `Bearer ${tokens.access}`
       }
-    )
+    })
 
+    authStore.setUsuario(usuario)
 
-    // Tenta obter a resposta da API
-    const dados = await resposta.json()
-
-console.log('Status:', resposta.status)
-console.log('Resposta do Django:', dados)
-
-    // Se o backend retornar erro
-    if (!resposta.ok) {
-      if (dados.detail) {
-        erro.value = dados.detail
-      } else {
-        erro.value = 'Não foi possível realizar o cadastro.'
-      }
-
-      return
-    }
-
-
-    // Cadastro realizado
     sucesso.value = true
 
-
-    /*
-     * Login automático
-     *
-     * Caso o backend retorne um token:
-     */
-    if (dados.access) {
-      localStorage.setItem('access_token', dados.access)
-    }
-
-    if (dados.refresh) {
-      localStorage.setItem('refresh_token', dados.refresh)
-    }
-
-    if (dados.token) {
-      localStorage.setItem('token', dados.token)
-    }
-
-
-    // Aguarda um pouco e entra na página inicial
     setTimeout(() => {
-      router.push('/')
-    }, 1000)
+      if (usuario.tipo?.toUpperCase() === 'BABA') {
+        router.push('/home-baba')
+      } else {
+        router.push('/home-familia')
+      }
+    }, 1500)
 
+  } catch (e) {
+    const data = e.response?.data
 
-  } catch (error) {
-    console.error('Erro no cadastro:', error)
-
-    erro.value =
-      'Não foi possível conectar ao servidor. Verifique se o Django está rodando.'
-
+    if (data?.email) {
+      erro.value = 'E-mail já cadastrado.'
+    } else if (data?.password) {
+      erro.value = 'Senha muito fraca. Use pelo menos 8 caracteres.'
+    } else {
+      erro.value = data?.detail || 'Erro ao cadastrar. Tente novamente.'
+    }
   } finally {
     carregando.value = false
   }
@@ -294,4 +242,3 @@ label {
 }
 
 </style>
-```

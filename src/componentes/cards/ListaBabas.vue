@@ -7,6 +7,8 @@ const babaStore = useBabaStore()
 
 const filtros = ref({
   busca: '',
+  foto: '',
+  nome: '',
   experiencia: 'Todas',
   apenasVerificadas: false,
   ordenar: 'Melhor Avaliação'
@@ -38,7 +40,7 @@ onMounted(async() => {
         <div class="foto-area">
           <img
             v-if="baba.usuario.foto"
-            :src="baba.usuario.foto.file"
+            :src="baba.usuario.foto.url"
             alt="foto"
           />
 
