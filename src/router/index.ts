@@ -6,6 +6,8 @@ import HomeBabaView from '@/views/HomeBabaView.vue'
 import BrowserBabaView from '@/views/BrowserBabaView.vue'
 import CadastroBabaView from '@/views/CadastroBabaView.vue'
 import CadastroResponsavelView from '@/views/CadastroResponsavelView.vue'
+import CompletarPerfilBabaView from '@/views/CompletarPerfilBabaView.vue'
+import CompletarPerfilResponsavelView from '@/views/CompletarPerfilResponsavelView.vue'
 import CalendarioView from '@/views/CalendarioView.vue'
 import AgendamentoView from '@/views/AgendamentoView.vue'
 import BabasDetalhesView from '@/views/BabasDetalhesView.vue'
@@ -48,6 +50,18 @@ const routes = [
     path: '/cadastro-responsavel',
     name: 'cadastroResponsavel',
     component: CadastroResponsavelView,
+  },
+
+  {
+    path: '/completar-perfil-baba',
+    name: 'completarPerfilBaba',
+    component: CompletarPerfilBabaView,
+  },
+
+  {
+    path: '/completar-perfil-responsavel',
+    name: 'completarPerfilResponsavel',
+    component: CompletarPerfilResponsavelView,
   },
 
   {

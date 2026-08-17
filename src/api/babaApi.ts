@@ -16,6 +16,10 @@ export const updateBaba = (id: number, data: object) => {
   return api.put(`/perfil-baba/${id}/`, data)
 }
 
+export const createBaba = (data: object) => {
+  return api.post('/perfil-baba/', data)
+}
+
 export const deleteBaba = (id: number) => {
   return api.delete(`/perfil-baba/${id}/`)
 }

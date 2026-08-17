@@ -32,7 +32,7 @@ const babas = [
 </script>
 
 <template>
-  <div class="pagina">
+<div class="pagina">
     <PerfilFamilia
       :nome="familia.nome"
       :cidade="familia.cidade"
