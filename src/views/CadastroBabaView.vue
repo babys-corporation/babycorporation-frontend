@@ -11,7 +11,7 @@ const authStore = useAuthStore()
 const form = ref({
   email: '',
   password: '',
-  tipo: TipoUsuario.PAI,
+  tipo: TipoUsuario.BABA,
 })
 
 const erro = ref('')

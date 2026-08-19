@@ -1,14 +1,24 @@
 <script setup>
+import { ref, onMounted } from 'vue'
 import PerfilFamilia from '../componentes/cards/PerfilFamilia.vue'
 import NecessidadesFamilia from '../componentes/cards/NecessidadesFamilia.vue'
 import InfoCriancas from '../componentes/cards/InfoCriancas.vue'
 import OpcoesBaba from '../componentes/cards/OpcoesBaba.vue'
+import { useAuthStore } from '@/stores/auth'
+import { useBabaStore } from '@/stores/baba'
+import { meRequest } from '@/api/auth'
 
-const familia = {
-  nome: 'Isabela Souza',
-  cidade: 'Porto Alegre, RS',
-  filhos: 4
-}
+const authStore = useAuthStore()
+const babaStore = useBabaStore()
+
+const carregando = ref(true)
+const erro = ref('')
+
+const familia = ref({
+  nome: '',
+  cidade: '',
+  filhos: 0
+})
 
 const disponibilidade = {
   Segunda: true,
@@ -20,35 +30,59 @@ const disponibilidade = {
   Domingo: false
 }
 
-const criancas = [
-  { idade: 10, unidade: 'anos' },
-  { idade: 2, unidade: 'meses' }
-]
+const criancas = ref([])
 
-const babas = [
-  { nome: 'Patrícia Alves', cidade: 'Brasília, DF', status: 'Disponível', foto: '/patricia.png' },
-  { nome: 'Ana Paula Costa', cidade: 'Rio de Janeiro, RJ', status: 'Disponível', foto: '/Ana Paula Costa.png' }
-]
+const babas = ref([])
+
+onMounted(async () => {
+  try {
+    const { data: usuario } = await meRequest()
+    authStore.setUsuario(usuario)
+
+    familia.value = {
+      nome: [usuario.primeiro_nome, usuario.ultimo_nome].filter(Boolean).join(' ') || usuario.email,
+      cidade: usuario.cidade || 'Cidade não informada',
+      filhos: 0
+    }
+
+    await babaStore.getBabas()
+
+    babas.value = babaStore.babas.map((b) => ({
+      nome: [b.usuario?.primeiro_nome, b.usuario?.ultimo_nome].filter(Boolean).join(' ') || b.usuario?.email,
+      cidade: b.usuario?.cidade || 'Cidade não informada',
+      status: b.disponivel ? 'Disponível' : 'Indisponível',
+      foto: b.usuario?.foto?.url || '/placeholder.png'
+    }))
+  } catch (e) {
+    console.error('Erro ao carregar dados:', e)
+    erro.value = 'Erro ao carregar dados.'
+  } finally {
+    carregando.value = false
+  }
+})
 </script>
 
 <template>
 <div class="pagina">
-    <PerfilFamilia
-      :nome="familia.nome"
-      :cidade="familia.cidade"
-      :filhos="familia.filhos"
-    />
+    <div v-if="carregando" class="card">
+      <h3>Carregando...</h3>
+    </div>
 
-    <NecessidadesFamilia :disponibilidade="disponibilidade" />
+    <div v-else-if="erro" class="card erro">
+      {{ erro }}
+    </div>
 
-    <InfoCriancas
-      :quantidade="2"
-      :criancas="criancas"
-      :habilidades="['Atividade física', 'Enfermaria', 'Ensino']"
-      :condicoes="['Ansiedade', 'Leucemia', 'TDHA']"
-    />
+    <template v-else>
+      <PerfilFamilia
+        :nome="familia.nome"
+        :cidade="familia.cidade"
+        :filhos="familia.filhos"
+      />
 
-    <OpcoesBaba :babas="babas" />
+      <NecessidadesFamilia :disponibilidade="disponibilidade" />
+
+      <OpcoesBaba :babas="babas" />
+    </template>
   </div>
 </template>
 
