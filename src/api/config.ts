@@ -57,6 +57,9 @@ api.interceptors.response.use(
         original.headers.Authorization = `Bearer ${newToken}`;
         return api(original);
       }
+
+      delete original.headers.Authorization;
+      return api(original);
     }
 
     return Promise.reject(error);
