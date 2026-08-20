@@ -40,7 +40,7 @@ onMounted(async() => {
         <div class="foto-area">
           <img
             v-if="baba.usuario.foto"
-            :src="baba.usuario.foto.file"
+            :src="baba.usuario.foto.url"
             alt="foto"
           />
 
