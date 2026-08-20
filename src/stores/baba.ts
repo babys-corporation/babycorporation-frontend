@@ -12,6 +12,8 @@ interface BabaInterface{
         "username": string,
         "first_name": string | null,
         "last_name": string | null,
+        "primeiro_nome": string | null,
+        "ultimo_nome": string | null,
         "email": string | null,
         "is_staff": boolean,
         "is_active": boolean,

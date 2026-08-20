@@ -57,7 +57,7 @@ onMounted(async() => {
         </div>
 
         <div class="conteudo">
-          <h2>{{ baba.usuario.first_name }}  {{ baba.usuario.last_name }}</h2>
+          <h2>{{ baba.usuario.primeiro_nome || baba.usuario.first_name }}  {{ baba.usuario.ultimo_nome || baba.usuario.last_name }}</h2>
 
           <p class="descricao">
             {{ baba.descricao }}
