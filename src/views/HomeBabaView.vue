@@ -2,12 +2,10 @@
 import { ref, onMounted } from 'vue'
 import BabaDisponibilidade from '../componentes/cards/BabaDisponibilidade.vue'
 import { useAuthStore } from '@/stores/auth'
-import { useBabaStore } from '@/stores/baba'
 import { meRequest } from '@/api/auth'
 import api from '@/api/config'
 
 const authStore = useAuthStore()
-const babaStore = useBabaStore()
 
 const carregando = ref(true)
 const erro = ref('')
@@ -34,18 +32,9 @@ async function carregarDados() {
     const { data: usuario } = await meRequest()
     authStore.setUsuario(usuario)
 
-    // Busca todas as babás
-    await babaStore.getBabas()
-
-    // Procura a babá correspondente ao usuário
-    baba.value = babaStore.babas.find(
-      (b: any) => b.usuario.id === usuario.id
-    )
-
-    if (!baba.value) {
-      erro.value = 'Perfil de babá não encontrado.'
-      return
-    }
+    // Busca o perfil da babá logada (independe de completude)
+    const { data: perfil } = await api.get('/perfil-baba/me/')
+    baba.value = perfil
 
     // Busca todos os agendamentos
     const { data } = await api.get('/agendamentos/')

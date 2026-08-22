@@ -20,8 +20,8 @@ interface BabaInterface{
         "date_joined": string,
         "tipo": string,
         "foto": {
-            file: string | undefined
-        },
+            url: string | undefined
+        } | null,
         "telefone": string | null,
         "groups": [],
         "user_permissions": []

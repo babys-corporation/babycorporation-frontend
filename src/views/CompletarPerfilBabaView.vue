@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { createBaba } from '@/api/babaApi'
 import api from '@/api/config'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -43,8 +42,9 @@ const completar = async () => {
       telefone: form.value.telefone,
     })
 
-    await createBaba({
-      usuario: usuario.id,
+    // O PerfilBaba já é criado automaticamente pelo signal no backend,
+    // portanto atualizamos em vez de criar um novo.
+    await api.patch('/perfil-baba/me/', {
       experiencia_anos: form.value.experiencia_anos,
       descricao: form.value.descricao,
       disponivel: form.value.disponivel,
