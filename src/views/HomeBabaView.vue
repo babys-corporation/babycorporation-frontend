@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import BabaDisponibilidade from '../componentes/cards/BabaDisponibilidade.vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { meRequest } from '@/api/auth'
 import api from '@/api/config'
 
+const router = useRouter()
 const authStore = useAuthStore()
 
 const carregando = ref(true)
@@ -13,14 +14,55 @@ const erro = ref('')
 const baba = ref<any>(null)
 const solicitacoes = ref<any[]>([])
 
-const disponibilidade = {
-  Segunda: true,
-  Terça: true,
-  Quarta: true,
-  Quinta: true,
-  Sexta: false,
-  Sábado: false,
-  Domingo: false,
+const ano = new Date().getFullYear()
+
+// Espelha os critérios de completude do backend (core/signals.py)
+const perfilCompleto = computed(() => {
+  if (!baba.value) return false
+
+  const u = baba.value.usuario ?? {}
+  const p = baba.value
+
+  const campos = [
+    u.foto,
+    u.cpf,
+    u.telefone,
+    u.cep,
+    u.cidade,
+    u.bairro,
+    p.descricao,
+    p.valor_hora,
+    p.habilidades,
+    p.dtnasc,
+    p.formacao,
+  ]
+
+  return campos.every(
+    (v) => v !== null && v !== undefined && String(v).trim() !== ''
+  )
+})
+
+// Completa: primeiro nome + último nome | Incompleta: e-mail sem o @...
+const nomeExibido = computed(() => {
+  const u = baba.value?.usuario ?? {}
+
+  if (perfilCompleto.value) {
+    return [u.primeiro_nome, u.ultimo_nome]
+      .filter(Boolean)
+      .join(' ')
+      .trim()
+  }
+
+  return String(u.email || '').split('@')[0] || 'Babá'
+})
+
+const localizacao = computed(() => {
+  const u = baba.value?.usuario ?? {}
+  return [u.bairro, u.cidade].filter(Boolean).join(', ')
+})
+
+function irParaFormulario() {
+  router.push('/completar-perfil-baba')
 }
 
 async function carregarDados() {
@@ -68,65 +110,81 @@ onMounted(carregarDados)
       {{ erro }}
     </div>
 
-    <template v-else>
+    <template v-else-if="baba">
 
+      <!-- Cabeçalho -->
       <div class="card perfil">
-        <div class="topo">
+
+        <div class="identidade">
+
+          <img
+            v-if="perfilCompleto && baba.usuario?.foto?.url"
+            :src="baba.usuario.foto.url"
+            alt="Foto da babá"
+            class="foto"
+          />
+          <div v-else class="foto foto-vazia">
+            👤
+          </div>
 
           <div>
-            <h2>{{ baba?.usuario.username }}</h2>
+            <h2>{{ nomeExibido }}</h2>
 
-            <div class="info-linha">
-              <span>
-                📍 {{ baba?.usuario.cidade || 'Cidade não informada' }}
-              </span>
+            <span v-if="!perfilCompleto" class="aviso">
+              Perfil incompleto
+            </span>
 
-              <span>
-                🕐 {{ baba?.experiencia_anos }} anos de experiência
-              </span>
-            </div>
-          </div>
-
-          <span class="editar">
-            ✏️
-          </span>
-
-        </div>
-
-        <BabaDisponibilidade
-          :disponibilidade="disponibilidade"
-        />
-
-        <div class="select-grupo">
-
-          <div class="select-item">
-            <span>Data</span>
-            <span>⌄</span>
-          </div>
-
-          <div class="select-item">
-            <span>Horário</span>
-            <span>⌄</span>
+            <p v-if="perfilCompleto && localizacao" class="localizacao">
+              📍 {{ localizacao }}
+            </p>
           </div>
 
         </div>
 
-        <p class="preco">
-          R$
-          {{ baba?.valor_hora ?? '0,00' }}
-          /hora
-        </p>
+        <template v-if="perfilCompleto">
 
-        <div
-          v-if="baba?.descricao"
-          class="descricao"
-        >
-          {{ baba.descricao }}
-        </div>
+          <p v-if="baba.descricao" class="descricao">
+            {{ baba.descricao }}
+          </p>
+
+          <div class="info-linha">
+            <span>
+              🕐 {{ baba.experiencia_anos }}
+              {{ baba.experiencia_anos === 1 ? 'ano' : 'anos' }} de experiência
+            </span>
+
+            <span v-if="baba.habilidades" class="habilidades">
+              🎯 {{ baba.habilidades }}
+            </span>
+          </div>
+
+          <p class="preco">
+            R$ {{ baba.valor_hora ?? '0,00' }}
+            /hora
+          </p>
+
+        </template>
 
       </div>
 
-      <div class="solicitacoes">
+      <!-- Formulário (perfil incompleto) -->
+      <div v-if="!perfilCompleto" class="card formulario">
+        <h3>Complete seu perfil</h3>
+        <p>
+          Falta pouco! Preencha o formulário para que as famílias
+          possam encontrar você.
+        </p>
+
+        <button
+          class="btn-formulario"
+          @click="irParaFormulario"
+        >
+          Abrir formulário
+        </button>
+      </div>
+
+      <!-- Solicitações (perfil completo) -->
+      <div v-if="perfilCompleto" class="solicitacoes">
 
         <h3>
           Solicitações de agendamento
@@ -179,6 +237,22 @@ onMounted(carregarDados)
 
       </div>
 
+      <!-- Rodapé -->
+      <footer class="rodape">
+        <span>BabyCorporation © {{ ano }}</span>
+
+        <div v-if="perfilCompleto" class="contato">
+          <span>📧 {{ baba.usuario?.email }}</span>
+          <span v-if="baba.usuario?.telefone">
+            📞 {{ baba.usuario.telefone }}
+          </span>
+          <span v-if="localizacao">
+            📍 {{ localizacao }}
+          </span>
+        </div>
+
+      </footer>
+
     </template>
 
   </div>
@@ -204,13 +278,29 @@ onMounted(carregarDados)
 .perfil {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
-.topo {
+.identidade {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 14px;
+}
+
+.foto {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.foto-vazia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background: #F3F4F6;
 }
 
 h2 {
@@ -219,34 +309,34 @@ h2 {
   margin: 0;
 }
 
-.info-linha {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 6px;
+.aviso {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.localizacao {
+  margin: 4px 0 0;
   font-size: 13px;
   color: #666;
 }
 
-.editar {
-  font-size: 20px;
-  cursor: pointer;
+.info-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #666;
 }
 
-.select-grupo {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.select-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #DDD;
-  border-radius: 8px;
-  padding: 12px 16px;
-  cursor: pointer;
+.habilidades {
+  background: #F3F4F6;
+  padding: 4px 10px;
+  border-radius: 10px;
 }
 
 .preco {
@@ -263,6 +353,30 @@ h2 {
   color: #555;
   font-size: 14px;
   line-height: 1.5;
+  margin: 0;
+}
+
+.formulario h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.formulario p {
+  margin: 0 0 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+.btn-formulario {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  background: linear-gradient(135deg, #ff2f92, #8b5cf6);
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .solicitacoes h3 {
@@ -290,6 +404,22 @@ h2 {
 .solicitacoes p {
   margin: 4px 0;
   color: #666;
+}
+
+.rodape {
+  margin-top: auto;
+  padding: 14px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: #888;
+}
+
+.contato {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .erro {
