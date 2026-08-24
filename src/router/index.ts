@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { useAuthStore } from '@/stores/auth'
+import { meRequest } from '@/api/auth'
+
 import WelcomeView from '@/views/WelcomeView\.vue'
 import HomeFamiliaView from '@/views/HomeFamiliaView.vue'
 import HomeBabaView from '@/views/HomeBabaView.vue'
@@ -20,6 +23,27 @@ const routes = [
     path: '/',
     name: 'welcome',
     component: WelcomeView,
+    // Já logado? Vai direto para a home definitiva do tipo de usuário
+    beforeEnter: async () => {
+      const auth = useAuthStore()
+
+      if (!auth.estaAutenticado) return true
+
+      try {
+        if (!auth.usuario) {
+          const { data } = await meRequest()
+          auth.setUsuario(data)
+        }
+
+        return auth.usuario?.tipo?.toUpperCase() === 'BABA'
+          ? '/home-baba'
+          : '/home-familia'
+      } catch {
+        // Token inválido/expirado — desloga e mostra o welcome
+        auth.logout()
+        return true
+      }
+    },
   },
 
   {

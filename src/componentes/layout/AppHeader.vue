@@ -68,6 +68,7 @@ const navegarPara = (rota: string) => {
           <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
         </template>
         <template v-else>
+          <a @click="navegarPara('/home-baba')">Home</a>
           <a @click="navegarPara('/agendamento')">Agendamento</a>
         </template>
       </nav>
@@ -99,6 +100,7 @@ const navegarPara = (rota: string) => {
           <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
         </template>
         <template v-else>
+          <a @click="navegarPara('/home-baba')">Home</a>
           <a @click="navegarPara('/agendamento')">Agendamento</a>
         </template>
         <hr />
