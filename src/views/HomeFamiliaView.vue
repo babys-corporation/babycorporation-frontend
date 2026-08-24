@@ -1,69 +1,96 @@
-<script setup>
-import { ref, onMounted } from 'vue'
-import PerfilFamilia from '../componentes/cards/PerfilFamilia.vue'
-import NecessidadesFamilia from '../componentes/cards/NecessidadesFamilia.vue'
-import InfoCriancas from '../componentes/cards/InfoCriancas.vue'
-import OpcoesBaba from '../componentes/cards/OpcoesBaba.vue'
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { useBabaStore } from '@/stores/baba'
+import { useResponsavelStore } from '@/stores/responsavel'
 import { meRequest } from '@/api/auth'
+import api from '@/api/config'
+import CompletarPerfilResponsavel from './CompletarPerfilResponsavelView.vue'
 
 const authStore = useAuthStore()
-const babaStore = useBabaStore()
+const responsavelStore = useResponsavelStore()
 
 const carregando = ref(true)
 const erro = ref('')
 
-const familia = ref({
-  nome: '',
-  cidade: '',
-  filhos: 0
+const usuario = ref<any>(null)
+const perfilPai = ref<any>(null)
+
+// Perfil completo: tem PerfilPai E os dados essenciais do usuário preenchidos
+const perfilCompleto = computed(() => {
+  const u = usuario.value
+  if (!u || !perfilPai.value) return false
+
+  return Boolean(
+    String(u.primeiro_nome || '').trim() &&
+    String(u.ultimo_nome || '').trim() &&
+    String(u.telefone || '').trim() &&
+    u.foto &&
+    perfilPai.value.numero_filhos !== null &&
+    perfilPai.value.numero_filhos !== undefined
+  )
 })
 
-const disponibilidade = {
-  Segunda: true,
-  Terça: true,
-  Quarta: true,
-  Quinta: true,
-  Sexta: false,
-  Sábado: false,
-  Domingo: false
-}
+// Completo: primeiro nome + último nome | Incompleto: e-mail antes do @
+const nomeExibido = computed(() => {
+  const u = usuario.value ?? {}
 
-const criancas = ref([])
+  if (perfilCompleto.value) {
+    return [u.primeiro_nome, u.ultimo_nome]
+      .filter(Boolean)
+      .join(' ')
+      .trim()
+  }
 
-const babas = ref([])
+  return String(u.email || '').split('@')[0] || 'Responsável'
+})
 
-onMounted(async () => {
+const quantidadeFilhos = computed(() => perfilPai.value?.numero_filhos ?? 0)
+
+// Quando o formulário embutido cria o perfil, troca para o modo completo na hora
+watch(() => responsavelStore.responsavel, async (novo) => {
+  if (!novo) return
+  perfilPai.value = novo
+
   try {
-    const { data: usuario } = await meRequest()
-    authStore.setUsuario(usuario)
+    const { data } = await meRequest()
+    usuario.value = data
+    authStore.setUsuario(data)
+  } catch {
+    // mantém os dados atuais
+  }
+})
 
-    familia.value = {
-      nome: [usuario.primeiro_nome, usuario.ultimo_nome].filter(Boolean).join(' ') || usuario.email,
-      cidade: usuario.cidade || 'Cidade não informada',
-      filhos: 0
+async function carregarDados() {
+  try {
+    carregando.value = true
+    erro.value = ''
+
+    // Busca o usuário logado
+    const { data } = await meRequest()
+    usuario.value = data
+    authStore.setUsuario(data)
+
+    // Busca o perfil do pai logado (404 => ainda não completou o perfil)
+    const { data: perfil } = await api.get('/perfil-pai/me/')
+    perfilPai.value = perfil
+  } catch (err: any) {
+    if (err?.response?.status === 404) {
+      perfilPai.value = null
+    } else {
+      console.error(err)
+      erro.value = 'Erro ao carregar os dados.'
     }
-
-    await babaStore.getBabas()
-
-    babas.value = babaStore.babas.map((b) => ({
-      nome: [b.usuario?.primeiro_nome, b.usuario?.ultimo_nome].filter(Boolean).join(' ') || b.usuario?.email,
-      cidade: b.usuario?.cidade || 'Cidade não informada',
-      status: b.disponivel ? 'Disponível' : 'Indisponível',
-      foto: b.usuario?.foto?.url || '/placeholder.png'
-    }))
-  } catch (e) {
-    console.error('Erro ao carregar dados:', e)
-    erro.value = 'Erro ao carregar dados.'
   } finally {
     carregando.value = false
   }
-})
+}
+
+onMounted(carregarDados)
 </script>
 
 <template>
-<div class="pagina">
+  <div class="pagina">
+
     <div v-if="carregando" class="card">
       <h3>Carregando...</h3>
     </div>
@@ -72,17 +99,52 @@ onMounted(async () => {
       {{ erro }}
     </div>
 
-    <template v-else>
-      <PerfilFamilia
-        :nome="familia.nome"
-        :cidade="familia.cidade"
-        :filhos="familia.filhos"
-      />
+    <template v-else-if="usuario">
 
-      <NecessidadesFamilia :disponibilidade="disponibilidade" />
+      <!-- Cabeçalho -->
+      <div class="card perfil">
 
-      <OpcoesBaba :babas="babas" />
+        <div class="identidade">
+
+          <img
+            v-if="perfilCompleto && usuario?.foto?.url"
+            :src="usuario.foto.url"
+            alt="Foto do responsável"
+            class="foto"
+          />
+          <div v-else-if="perfilCompleto" class="foto foto-vazia">
+            👤
+          </div>
+
+          <div>
+            <h2>{{ nomeExibido }}</h2>
+
+            <span v-if="!perfilCompleto" class="aviso">
+              Perfil incompleto
+            </span>
+
+            <div v-if="perfilCompleto" class="contato">
+              <span>📧 {{ usuario?.email }}</span>
+              <span v-if="usuario?.telefone">
+                📞 {{ usuario.telefone }}
+              </span>
+            </div>
+
+            <p v-if="perfilCompleto" class="filhos">
+              🧒 {{ quantidadeFilhos }}
+              {{ quantidadeFilhos === 1 ? 'filho' : 'filhos' }}
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Formulário (perfil incompleto): CompletarPerfilResponsavelView embutido -->
+      <CompletarPerfilResponsavel v-if="!perfilCompleto" />
+
     </template>
+
   </div>
 </template>
 
@@ -95,6 +157,76 @@ onMounted(async () => {
   flex-direction: column;
   gap: 16px;
 }
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+}
+
+.perfil {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.identidade {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.foto {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.foto-vazia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background: #F3F4F6;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.aviso {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.filhos {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.contato {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: #666;
+}
+
+.erro {
+  text-align: center;
+  color: #B91C1C;
+  background: #FEE2E2;
+}
 </style>
-
-

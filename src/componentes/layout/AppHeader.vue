@@ -1,10 +1,38 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Menu, X, Baby } from 'lucide-vue-next';
+import { useAuthStore } from '@/stores/auth';
+import { meRequest } from '@/api/auth';
 
 const router = useRouter();
+const authStore = useAuthStore();
 const menuAberto = ref(false);
+
+const ehBabaLogada = computed(
+  () => authStore.usuario?.tipo?.toUpperCase() === 'BABA'
+);
+
+// Usuário do tipo PAI/responsável logado
+const ehPaiLogado = computed(
+  () => authStore.estaAutenticado && !ehBabaLogada.value
+);
+
+const sair = () => {
+  authStore.logout();
+  navegarPara('/');
+};
+
+onMounted(async () => {
+  if (authStore.estaAutenticado && !authStore.usuario) {
+    try {
+      const { data } = await meRequest();
+      authStore.setUsuario(data);
+    } catch {
+      // token inválido/expirado — mantém o menu padrão
+    }
+  }
+});
 
 const toggleMenu = () => {
   menuAberto.value = !menuAberto.value;
@@ -31,15 +59,25 @@ const navegarPara = (rota: string) => {
 
       <!-- Menu desktop -->
       <nav class="menu-desktop">
-        <a @click="navegarPara('/')">Início</a>
-        <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
-        <a @click="navegarPara('/Agendamento')">Agendamento</a>
-        <a @click="navegarPara('/CalendarioView')">Calendario</a>
+        <template v-if="ehPaiLogado">
+          <a @click="navegarPara('/home-familia')">Home</a>
+          <a @click="navegarPara('/buscar-babas')">Procurar Babás</a>
+        </template>
+        <template v-else-if="!authStore.estaAutenticado">
+          <a @click="navegarPara('/')">Início</a>
+          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+        </template>
+        <template v-else>
+          <a @click="navegarPara('/agendamento')">Agendamento</a>
+        </template>
       </nav>
 
       <div class="acoes-desktop">
-        <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
-        <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
+        <template v-if="!authStore.estaAutenticado">
+          <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
+          <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
+        </template>
+        <button v-else class="btn-outline" @click="sair">Sair</button>
       </div>
 
       <!-- Botão hamburguer (mobile) -->
@@ -52,13 +90,23 @@ const navegarPara = (rota: string) => {
     <!-- Menu mobile (dropdown) -->
     <transition name="slide">
       <nav v-if="menuAberto" class="menu-mobile">
-        <a @click="navegarPara('/')">Início</a>
-        <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
-        <a @click="navegarPara('/Agendamento')">Agendamento</a>
-        <a @click="navegarPara('/CalendarioView')">Calendario</a>
+        <template v-if="ehPaiLogado">
+          <a @click="navegarPara('/home-familia')">Home</a>
+          <a @click="navegarPara('/buscar-babas')">Procurar Babás</a>
+        </template>
+        <template v-else-if="!authStore.estaAutenticado">
+          <a @click="navegarPara('/')">Início</a>
+          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+        </template>
+        <template v-else>
+          <a @click="navegarPara('/agendamento')">Agendamento</a>
+        </template>
         <hr />
-        <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
-        <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
+        <template v-if="!authStore.estaAutenticado">
+          <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
+          <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
+        </template>
+        <button v-else class="btn-outline" @click="sair">Sair</button>
       </nav>
     </transition>
 

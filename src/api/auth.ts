@@ -25,6 +25,13 @@ export interface Usuario {
   telefone: string;
   is_active: boolean;
   is_staff: boolean;
+  primeiro_nome?: string;
+  ultimo_nome?: string;
+  cpf?: string;
+  cep?: string;
+  cidade?: string;
+  bairro?: string;
+  experiencia_anos?: number;
 }
 
 // ─── Payloads ─────────────────────────────────────────────

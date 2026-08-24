@@ -14,8 +14,6 @@ const erro = ref('')
 const baba = ref<any>(null)
 const solicitacoes = ref<any[]>([])
 
-const ano = new Date().getFullYear()
-
 // Espelha os critérios de completude do backend (core/signals.py)
 const perfilCompleto = computed(() => {
   if (!baba.value) return false
@@ -137,6 +135,13 @@ onMounted(carregarDados)
             <p v-if="perfilCompleto && localizacao" class="localizacao">
               📍 {{ localizacao }}
             </p>
+
+            <div v-if="perfilCompleto" class="contato">
+              <span>📧 {{ baba.usuario?.email }}</span>
+              <span v-if="baba.usuario?.telefone">
+                📞 {{ baba.usuario.telefone }}
+              </span>
+            </div>
           </div>
 
         </div>
@@ -237,22 +242,6 @@ onMounted(carregarDados)
 
       </div>
 
-      <!-- Rodapé -->
-      <footer class="rodape">
-        <span>BabyCorporation © {{ ano }}</span>
-
-        <div v-if="perfilCompleto" class="contato">
-          <span>📧 {{ baba.usuario?.email }}</span>
-          <span v-if="baba.usuario?.telefone">
-            📞 {{ baba.usuario.telefone }}
-          </span>
-          <span v-if="localizacao">
-            📍 {{ localizacao }}
-          </span>
-        </div>
-
-      </footer>
-
     </template>
 
   </div>
@@ -321,6 +310,15 @@ h2 {
 
 .localizacao {
   margin: 4px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.contato {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
   font-size: 13px;
   color: #666;
 }
@@ -404,22 +402,6 @@ h2 {
 .solicitacoes p {
   margin: 4px 0;
   color: #666;
-}
-
-.rodape {
-  margin-top: auto;
-  padding: 14px 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 13px;
-  color: #888;
-}
-
-.contato {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
 }
 
 .erro {
