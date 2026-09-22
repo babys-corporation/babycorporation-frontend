@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/api/config'
+import AgendamentoVisaoUsuario from '@/componentes/cards/AgendamentoVisaoUsuario.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -10,12 +11,20 @@ const carregando = ref(true)
 const erro = ref('')
 const baba = ref<any>(null)
 
-// Formulário de agendamento (sem função por enquanto)
-const agendamento = ref({
-  data: '',
-  horaInicio: '',
-  horaFim: '',
-})
+// Disponibilidade predefinida pela babá.
+// Enquanto o backend não expõe esse campo, usa um padrão local
+// (deverá vir do perfil da babá quando a API passar a salvá-lo).
+const disponibilidadeDefault = {
+  Segunda: true,
+  Terça: true,
+  Quarta: true,
+  Quinta: true,
+  Sexta: true,
+  Sábado: false,
+  Domingo: false,
+}
+
+const disponibilidade = ref({ ...disponibilidadeDefault })
 
 function calcularIdade(dtnasc: string | null): number | null {
   if (!dtnasc) return null
@@ -54,6 +63,10 @@ async function carregar() {
 
     const { data } = await api.get(`/perfil-baba/${id}/`)
     baba.value = data
+
+    if (data.disponibilidade) {
+      disponibilidade.value = { ...disponibilidadeDefault, ...data.disponibilidade }
+    }
   } catch (e) {
     console.error(e)
     erro.value = 'Não foi possível carregar o perfil desta babá.'
@@ -154,24 +167,10 @@ onMounted(carregar)
       <div class="card">
         <h2>Agendar um cuidado</h2>
 
-        <label>Data</label>
-        <input v-model="agendamento.data" type="date" />
-
-        <div class="linha">
-          <div class="campo">
-            <label>Início</label>
-            <input v-model="agendamento.horaInicio" type="time" />
-          </div>
-          <div class="campo">
-            <label>Fim</label>
-            <input v-model="agendamento.horaFim" type="time" />
-          </div>
-        </div>
-
-        <!-- Por enquanto, sem função -->
-        <button class="btn-agendar">
-          📅 Agendar cuidado
-        </button>
+        <AgendamentoVisaoUsuario
+          :baba="baba"
+          :disponibilidade="disponibilidade"
+        />
       </div>
 
     </template>
@@ -295,48 +294,6 @@ onMounted(carregar)
   color: #F6339A;
   font-size: 26px;
   font-weight: bold !important;
-}
-
-label {
-  display: block;
-  font-size: 13px;
-  font-weight: bold;
-  color: #555;
-  margin: 12px 0 4px;
-}
-
-input[type="date"],
-input[type="time"] {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  background: #f9f9f9;
-  outline: none;
-  box-sizing: border-box;
-}
-
-.linha {
-  display: flex;
-  gap: 10px;
-}
-
-.campo {
-  flex: 1;
-}
-
-.btn-agendar {
-  width: 100%;
-  margin-top: 16px;
-  border: none;
-  border-radius: 10px;
-  padding: 14px;
-  background: linear-gradient(135deg, #ff2f92, #8b5cf6);
-  color: white;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
 }
 
 .erro {

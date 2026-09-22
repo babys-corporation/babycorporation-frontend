@@ -23,6 +23,7 @@ const form = ref({
   habilidades: '',
   dtnasc: '',
   formacao: '',
+  chave_pix: '',
 })
 
 const fotoAtual = ref<string>('')
@@ -88,6 +89,7 @@ async function carregarDadosExistentes() {
     form.value.habilidades = perfil.habilidades ?? ''
     form.value.dtnasc = perfil.dtnasc ?? ''
     form.value.formacao = perfil.formacao ?? ''
+    form.value.chave_pix = perfil.chave_pix ?? ''
   } catch (e) {
     console.error(e)
     erro.value = 'Erro ao carregar seus dados.'
@@ -166,6 +168,7 @@ const salvar = async () => {
       habilidades: form.value.habilidades || null,
       dtnasc: form.value.dtnasc || null,
       formacao: form.value.formacao || null,
+      chave_pix: form.value.chave_pix || null,
     })
 
     authStore.setUsuario({
@@ -303,6 +306,12 @@ const salvar = async () => {
         <input type="checkbox" v-model="form.disponivel" />
         Disponível para novos agendamentos
       </label>
+
+      <input
+        v-model="form.chave_pix"
+        type="text"
+        placeholder="Chave Pix para receber pagamentos (CPF, e-mail ou telefone)"
+      />
 
       <button class="btn-salvar" type="submit" :disabled="carregando">
         {{ carregando ? 'Salvando...' : 'Salvar perfil' }}
