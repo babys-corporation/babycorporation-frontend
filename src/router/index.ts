@@ -71,7 +71,7 @@ const routes = [
   },
 
   {
-    path: '/agendamento',
+    path: '/agendamento/:id?',
     name: 'agendamento',
     component: AgendamentoView,
   },

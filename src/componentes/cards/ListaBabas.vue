@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import BabaCard from '@/componentes/cards/BabaCard.vue'
-import FiltrosBabas from '@/componentes/cards/FiltrosBabas.vue' 
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import FiltrosBabas from '@/componentes/cards/FiltrosBabas.vue'
 import { useBabaStore } from '@/stores/baba'
+
 const babaStore = useBabaStore()
+const router = useRouter()
+
+function agendar(id: number) {
+  router.push(`/agendamento/${id}`)
+}
 
 const filtros = ref({
   busca: '',
@@ -40,7 +46,7 @@ onMounted(async() => {
         <div class="foto-area">
           <img
             v-if="baba.usuario.foto"
-            :src="baba.usuario.foto.file"
+            :src="baba.usuario.foto.url"
             alt="foto"
           />
 
@@ -76,7 +82,9 @@ onMounted(async() => {
               R$ {{ baba.valor_hora || 24 }}/hora
             </span>
 
-           
+            <button class="btn-agendar" type="button" @click="agendar(baba.id)">
+              Agendar
+            </button>
           </div>
         </div>
       </div>
@@ -194,6 +202,17 @@ font-size: 14px;
 .experiencia {
   font-size: 13px;
   color: #777;
+}
+
+.btn-agendar {
+  background: #f6339a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .vazio {
