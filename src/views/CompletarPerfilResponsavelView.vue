@@ -13,42 +13,103 @@ const form = ref({
   first_name: '',
   last_name: '',
   telefone: '',
+  cpf: '',
+  cep: '',
   numero_filhos: 1,
-  endereco: '',
 })
+
+const fotoFile = ref<File | null>(null)
+const previewFoto = ref<string | null>(null)
 
 const erro = ref('')
 const sucesso = ref(false)
 const carregando = ref(false)
+
+function onFotoChange(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    fotoFile.value = file
+    previewFoto.value = URL.createObjectURL(file)
+  }
+}
 
 const completar = async () => {
   erro.value = ''
   carregando.value = true
 
   try {
-    const usuario = authStore.usuario
+    let usuario = authStore.usuario
     if (!usuario) {
-      erro.value = 'Usuário não encontrado. Faça login novamente.'
-      return
+      try {
+        const res = await import('@/api/auth')
+        const { data } = await res.meRequest()
+        authStore.setUsuario(data)
+        usuario = data
+      } catch {
+        erro.value = 'Usuário não encontrado. Faça login novamente.'
+        return
+      }
     }
 
-    await api.patch(`/usuarios/${usuario.id}/`, {
-      first_name: form.value.first_name,
-      last_name: form.value.last_name,
-      telefone: form.value.telefone,
-    })
+    let foto_attachment_key = null
 
-    await responsavelStore.createResponsavel({
-      usuario: usuario.id,
-      numero_filhos: form.value.numero_filhos,
-      endereco: form.value.endereco,
-    })
+    if (fotoFile.value) {
+      const fdImg = new FormData()
+      fdImg.append('file', fotoFile.value)
+
+      // Usa a instância `api` (baseURL já inclui /api).
+      // Não definir Content-Type: o axios coloca o boundary correto sozinho.
+      const token = localStorage.getItem('access_token')
+      const imgRes = await api.post('/media/images/', fdImg, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      foto_attachment_key = imgRes.data.attachment_key
+    }
+
+const payloadUsuario: any = {
+  primeiro_nome: form.value.first_name,
+  ultimo_nome: form.value.last_name,
+  telefone: form.value.telefone.replace(/\D/g, ''),
+  cpf: form.value.cpf.replace(/\D/g, ''),
+  cep: form.value.cep.replace(/\D/g, ''),
+}
+
+    if (foto_attachment_key) {
+      payloadUsuario.foto_attachment_key = foto_attachment_key
+    }
+
+    await api.patch(`/usuarios/${usuario.id}/`, payloadUsuario)
+
+    try {
+      await api.get('/perfil-pai/me/')
+      await api.patch('/perfil-pai/me/', {
+        numero_filhos: form.value.numero_filhos,
+      })
+    } catch {
+      try {
+        await responsavelStore.createResponsavel({
+          usuario: usuario.id,
+          numero_filhos: form.value.numero_filhos,
+        })
+      } catch (e: any) {
+        const data = e.response?.data
+        if (!(data?.detail && String(data.detail).includes('já possui'))) {
+          throw e
+        }
+        await api.patch('/perfil-pai/me/', {
+          numero_filhos: form.value.numero_filhos,
+        })
+      }
+    }
 
     authStore.setUsuario({
       ...usuario,
-      first_name: form.value.first_name,
-      last_name: form.value.last_name,
+      primeiro_nome: form.value.first_name,
+      ultimo_nome: form.value.last_name,
       telefone: form.value.telefone,
+      cpf: form.value.cpf,
+      cep: form.value.cep,
     })
 
     sucesso.value = true
@@ -58,7 +119,22 @@ const completar = async () => {
     }, 1500)
   } catch (e: any) {
     const data = e.response?.data
-    erro.value = data?.detail || data?.usuario?.[0] || 'Erro ao completar perfil. Tente novamente.'
+    console.error('COMPLETAR_PAI_ERRO:', e?.response?.status, data)
+    let msg = 'Erro ao completar perfil. Tente novamente.'
+    if (typeof data === 'string') {
+      // Evita mostrar uma página HTML inteira (ex.: 404/500 do Django) no card de erro
+      msg = data.trim().startsWith('<')
+        ? 'Erro de comunicação com o servidor. Tente novamente.'
+        : data.substring(0, 300)
+    } else if (data?.detail) msg = data.detail
+    else if (data?.usuario?.[0]) msg = data.usuario[0]
+    else if (data?.non_field_errors?.[0]) msg = data.non_field_errors[0]
+    else if (Object.keys(data || {}).length) {
+      const k = Object.keys(data)[0] as string
+      const v = data[k]
+      msg = Array.isArray(v) ? v[0] : String(v)
+    }
+    erro.value = msg
   } finally {
     carregando.value = false
   }
@@ -83,6 +159,16 @@ const completar = async () => {
     <form class="card" @submit.prevent="completar">
       <p class="titulo">Dados pessoais</p>
 
+      <div class="foto-upload">
+        <label class="foto-label">
+          <div class="foto-preview">
+            <img v-if="previewFoto" :src="previewFoto" alt="Foto" />
+            <span v-else>📷 Adicionar foto</span>
+          </div>
+          <input type="file" accept="image/*" @change="onFotoChange" required />
+        </label>
+      </div>
+
       <div class="linha">
         <input
           v-model="form.first_name"
@@ -102,6 +188,20 @@ const completar = async () => {
         v-model="form.telefone"
         type="tel"
         placeholder="Telefone"
+        required
+      />
+
+      <input
+        v-model="form.cpf"
+        type="text"
+        placeholder="CPF"
+        required
+      />
+
+      <input
+        v-model="form.cep"
+        type="text"
+        placeholder="CEP"
         required
       />
 
@@ -127,13 +227,6 @@ const completar = async () => {
           </button>
         </div>
       </div>
-
-      <input
-        v-model="form.endereco"
-        type="text"
-        placeholder="Endereço completo"
-        required
-      />
 
       <button
         class="btn-salvar"
@@ -290,5 +383,43 @@ input {
   background: #fee2e2;
   color: #991b1b;
   text-align: center;
+}
+.foto-upload {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.foto-label {
+  cursor: pointer;
+}
+
+.foto-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #e5e7eb;
+}
+
+.foto-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto-preview span {
+  font-size: 12px;
+  text-align: center;
+  color: #6b7280;
+  padding: 8px;
+}
+
+.foto-label input {
+  display: none;
 }
 </style>

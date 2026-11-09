@@ -17,12 +17,18 @@ interface Image {
 
 export interface Usuario {
   id: number;
-  first_name: string;
-  last_name: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  primeiro_nome?: string | null;
+  ultimo_nome?: string | null;
   email: string;
   tipo: TipoUsuario;
   foto?: Image;
-  telefone: string;
+  telefone?: string | null;
+  cpf?: string | null;
+  cep?: string | null;
+  cidade?: string | null;
+  bairro?: string | null;
   is_active: boolean;
   is_staff: boolean;
 }

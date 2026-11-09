@@ -9,6 +9,7 @@ import CadastroResponsavelView from '@/views/CadastroResponsavelView.vue'
 import CompletarPerfilBabaView from '@/views/CompletarPerfilBabaView.vue'
 import CompletarPerfilResponsavelView from '@/views/CompletarPerfilResponsavelView.vue'
 import CalendarioView from '@/views/CalendarioView.vue'
+import AgendamentosBabaView from '@/views/AgendamentosBabaView.vue'
 import AgendamentoView from '@/views/AgendamentoView.vue'
 import BabasDetalhesView from '@/views/BabasDetalhesView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
@@ -68,6 +69,12 @@ const routes = [
     path: '/calendario',
     name: 'calendario',
     component: CalendarioView,
+  },
+
+  {
+    path: '/agendamentos-baba',
+    name: 'agendamentosBaba',
+    component: AgendamentosBabaView,
   },
 
   {

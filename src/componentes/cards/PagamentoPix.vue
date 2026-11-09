@@ -1,51 +1,61 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import {
-  getPagamento,
-  type PagamentoPix,
-  type StatusPagamento,
+  getAgendamento,
+  getPagamentoQrcode,
+  marcarPago,
+  type Agendamento,
 } from "@/api/agendamentoApi";
 
 const props = defineProps<{
-  agendamentoId: number;
-  pagamentoInicial: PagamentoPix;
+  agendamento: Agendamento;
 }>();
 
 const emit = defineEmits<{
-  (e: "pago", pagamento: PagamentoPix): void;
+  (e: "pago"): void;
   (e: "fechar"): void;
 }>();
 
-const pagamento = ref<PagamentoPix>({ ...props.pagamentoInicial });
+const agendamento = ref<Agendamento>({ ...props.agendamento });
 const copiado = ref(false);
 const verificando = ref(false);
+const avisando = ref(false);
 const erro = ref("");
+const qrSrc = ref("");
 let timer: ReturnType<typeof setInterval> | undefined;
+let qrUrl: string | undefined;
 
-const pago = computed(() => pagamento.value.status === "PAGO");
+const pago = computed(
+  () => agendamento.value.status_pagamento === "PAGO"
+);
 
-const qrSrc = computed(() => {
-  const bruto = pagamento.value.qr_code_base64;
+const recusado = computed(() => agendamento.value.status === "RECUSADO");
 
-  if (!bruto) return "";
-  if (bruto.startsWith("data:")) return bruto;
+const semChave = computed(
+  () => agendamento.value.status_pagamento === "NAO_EXIGIDO"
+);
 
-  return `data:image/png;base64,${bruto}`;
-});
-
-const rotulos: Record<StatusPagamento, string> = {
-  PENDENTE: "Aguardando pagamento",
-  PAGO: "Pagamento confirmado",
-  EXPIRADO: "QR Code expirado",
-  CANCELADO: "Pagamento cancelado",
-  ERRO: "Erro ao gerar cobrança",
-};
-
-const statusLabel = computed(() => rotulos[pagamento.value.status] ?? pagamento.value.status);
+const pagamentoAvisado = computed(() =>
+  Boolean(agendamento.value.pagamento_marcado_em)
+);
 
 const valorFormatado = computed(() => {
-  const valor = Number(pagamento.value.valor ?? 0);
-  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const valor = Number(agendamento.value.preco ?? 0);
+  return valor.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+});
+
+const statusLabel = computed(() => {
+  if (pago.value) return "Pagamento confirmado";
+  if (semChave.value) return "Pagamento não exigido";
+
+  if (pagamentoAvisado.value) {
+    return "Aguardando a babá confirmar o recebimento";
+  }
+
+  return "Aguardando pagamento";
 });
 
 function pararPolling() {
@@ -55,15 +65,36 @@ function pararPolling() {
   }
 }
 
+function liberarQrCode() {
+  if (qrUrl) {
+    URL.revokeObjectURL(qrUrl);
+    qrUrl = undefined;
+  }
+}
+
 async function copiarCodigo() {
-  if (!pagamento.value.copia_e_cola) return;
+  const codigo = agendamento.value.pix_brcode;
+  if (!codigo) return;
 
   try {
-    await navigator.clipboard.writeText(pagamento.value.copia_e_cola);
+    await navigator.clipboard.writeText(codigo);
     copiado.value = true;
     setTimeout(() => (copiado.value = false), 2000);
   } catch {
     erro.value = "Não foi possível copiar. Selecione o código manualmente.";
+  }
+}
+
+async function carregarQrCode() {
+  if (!agendamento.value.pix_brcode) return;
+
+  try {
+    const { data } = await getPagamentoQrcode(agendamento.value.id);
+    liberarQrCode();
+    qrUrl = URL.createObjectURL(data);
+    qrSrc.value = qrUrl;
+  } catch {
+    qrSrc.value = "";
   }
 }
 
@@ -72,27 +103,52 @@ async function verificarPagamento() {
   erro.value = "";
 
   try {
-    const { data } = await getPagamento(props.agendamentoId);
-    pagamento.value = data;
+    const { data } = await getAgendamento(agendamento.value.id);
+    agendamento.value = data;
 
-    if (data.status === "PAGO") {
+    if (data.status_pagamento === "PAGO") {
       pararPolling();
-      emit("pago", data);
+      emit("pago");
+    } else if (data.status === "RECUSADO") {
+      pararPolling();
     }
   } catch {
-    erro.value = "Não foi possível consultar o pagamento agora.";
+    erro.value = "Não foi possível consultar o agendamento agora.";
   } finally {
     verificando.value = false;
   }
 }
 
+async function avisarPagamento() {
+  avisando.value = true;
+  erro.value = "";
+
+  try {
+    const { data } = await marcarPago(agendamento.value.id);
+    agendamento.value = data;
+  } catch (e: any) {
+    erro.value =
+      e?.response?.data?.detail ||
+      "Não foi possível avisar o pagamento. Tente novamente.";
+  } finally {
+    avisando.value = false;
+  }
+}
+
 function iniciarPolling() {
-  if (pago.value) return;
+  if (pago.value || recusado.value) return;
   timer = setInterval(verificarPagamento, 5000);
 }
 
-onMounted(iniciarPolling);
-onBeforeUnmount(pararPolling);
+onMounted(async () => {
+  await carregarQrCode();
+  iniciarPolling();
+});
+
+onBeforeUnmount(() => {
+  pararPolling();
+  liberarQrCode();
+});
 </script>
 
 <template>
@@ -105,9 +161,35 @@ onBeforeUnmount(pararPolling);
       <div v-if="pago" class="sucesso">
         <div class="icone">✓</div>
         <h2>Pagamento confirmado!</h2>
-        <p>O agendamento foi marcado como pago e já está disponível para a babá.</p>
+        <p>
+          A babá confirmou o recebimento do Pix e aceitou o agendamento.
+        </p>
         <button class="btn-principal" type="button" @click="emit('fechar')">
           Concluir
+        </button>
+      </div>
+
+      <div v-else-if="recusado" class="sucesso">
+        <div class="icone aviso">!</div>
+        <h2>Agendamento recusado</h2>
+        <p>
+          A babá recusou este agendamento. Se você já pagou o Pix, combine a
+          devolução diretamente com ela.
+        </p>
+        <button class="btn-principal" type="button" @click="emit('fechar')">
+          Entendi
+        </button>
+      </div>
+
+      <div v-else-if="semChave" class="sucesso">
+        <div class="icone aviso">!</div>
+        <h2>Agendamento aceito</h2>
+        <p>
+          A babá aceitou o agendamento, mas ainda não cadastrou uma chave Pix.
+          Combine o pagamento diretamente com ela.
+        </p>
+        <button class="btn-principal" type="button" @click="emit('fechar')">
+          Entendi
         </button>
       </div>
 
@@ -123,15 +205,15 @@ onBeforeUnmount(pararPolling);
         <div v-else class="qr-vazio">QR Code indisponível</div>
 
         <textarea
-          v-if="pagamento.copia_e_cola"
+          v-if="agendamento.pix_brcode"
           class="copia-cola"
           readonly
-          :value="pagamento.copia_e_cola"
+          :value="agendamento.pix_brcode"
           @focus="($event.target as HTMLTextAreaElement).select()"
         />
 
         <button
-          v-if="pagamento.copia_e_cola"
+          v-if="agendamento.pix_brcode"
           class="btn-secundario"
           type="button"
           @click="copiarCodigo"
@@ -144,14 +226,29 @@ onBeforeUnmount(pararPolling);
         <button
           class="btn-principal"
           type="button"
+          :disabled="avisando || pagamentoAvisado"
+          @click="avisarPagamento"
+        >
+          {{
+            avisando
+              ? "Avisando..."
+              : pagamentoAvisado
+                ? "Pagamento avisado"
+                : "Já paguei / Avisar a babá"
+          }}
+        </button>
+
+        <button
+          class="btn-secundario"
+          type="button"
           :disabled="verificando"
           @click="verificarPagamento"
         >
-          {{ verificando ? "Verificando..." : "Já paguei / Verificar agora" }}
+          {{ verificando ? "Verificando..." : "Verificar agora" }}
         </button>
 
         <p class="aviso">
-          A confirmação é automática pelo webhook da Efí. Esta tela também
+          A babá aceita o agendamento depois de receber o Pix. Esta tela
           verifica o status a cada 5 segundos.
         </p>
       </template>
@@ -316,5 +413,9 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.icone.aviso {
+  background: #f59e0b;
 }
 </style>

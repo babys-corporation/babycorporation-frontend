@@ -1,29 +1,13 @@
 import api from "./config";
 
-export type StatusPagamento =
-  | "PENDENTE"
-  | "PAGO"
-  | "EXPIRADO"
-  | "CANCELADO"
-  | "ERRO";
+export type StatusAgendamento = "PENDENTE" | "ACEITO" | "RECUSADO";
 
-export interface PagamentoPix {
-  id: number;
-  agendamento: number;
-  txid: string;
-  e2e_id: string | null;
-  valor: string;
-  status: StatusPagamento;
-  copia_e_cola: string;
-  qr_code_base64: string;
-  criado_em: string;
-  atualizado_em: string;
-  pago_em: string | null;
-}
+export type StatusPagamento = "AGUARDANDO" | "PAGO" | "NAO_EXIGIDO";
 
 export interface Agendamento {
   id: number;
   baba: number;
+  nome_baba: string;
   pai: number;
   nome_familia: string;
   cidade: string | null;
@@ -32,8 +16,13 @@ export interface Agendamento {
   hora_fim: string;
   preco: string;
   qtd_criancas: number;
-  status: string;
-  pagamento: PagamentoPix | null;
+  status: StatusAgendamento;
+  status_pagamento: StatusPagamento;
+  pix_brcode: string | null;
+  pix_txid: string | null;
+  pagamento_marcado_em: string | null;
+  pagamento_confirmado_em: string | null;
+  nivel_advertencia_aplicada: number;
   criado_em: string;
 }
 
@@ -43,7 +32,14 @@ export interface NovoAgendamento {
   hora_inicio: string;
   hora_fim: string;
   qtd_criancas: number;
-  preco?: string;
+}
+
+export interface PagamentoInfo {
+  id: number;
+  preco: string;
+  status_pagamento: StatusPagamento;
+  pix_brcode: string | null;
+  pix_txid: string | null;
 }
 
 export const getAgendamentos = () => api.get("/agendamentos/");
@@ -54,8 +50,22 @@ export const getAgendamento = (id: number) =>
 export const createAgendamento = (dados: NovoAgendamento) =>
   api.post<Agendamento>("/agendamentos/", dados);
 
-export const criarPagamentoPix = (agendamentoId: number) =>
-  api.post<PagamentoPix>(`/agendamentos/${agendamentoId}/pagar/`);
+export const aceitarAgendamento = (id: number) =>
+  api.post<Agendamento>(`/agendamentos/${id}/aceitar/`);
 
-export const getPagamento = (agendamentoId: number) =>
-  api.get<PagamentoPix>(`/agendamentos/${agendamentoId}/pagamento/`);
+export const recusarAgendamento = (id: number) =>
+  api.post<Agendamento>(`/agendamentos/${id}/recusar/`);
+
+export const getPagamento = (id: number) =>
+  api.get<PagamentoInfo>(`/agendamentos/${id}/pagamento/`);
+
+export const getPagamentoQrcode = (id: number) =>
+  api.get<Blob>(`/agendamentos/${id}/pagamento_qrcode/`, {
+    responseType: "blob",
+  });
+
+export const marcarPago = (id: number) =>
+  api.post<Agendamento>(`/agendamentos/${id}/marcar_pago/`);
+
+export const confirmarPagamento = (id: number) =>
+  api.post<Agendamento>(`/agendamentos/${id}/confirmar_pagamento/`);

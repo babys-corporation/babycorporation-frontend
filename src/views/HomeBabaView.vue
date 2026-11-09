@@ -12,9 +12,6 @@ const carregando = ref(true)
 const erro = ref('')
 
 const baba = ref<any>(null)
-const solicitacoes = ref<any[]>([])
-
-const ano = new Date().getFullYear()
 
 // Espelha os critérios de completude do backend (core/signals.py)
 const perfilCompleto = computed(() => {
@@ -22,6 +19,10 @@ const perfilCompleto = computed(() => {
 
   const u = baba.value.usuario ?? {}
   const p = baba.value
+
+  if (!p.chave_pix || String(p.chave_pix).trim() === '') {
+    return false
+  }
 
   const campos = [
     u.foto,
@@ -42,24 +43,98 @@ const perfilCompleto = computed(() => {
   )
 })
 
-// Completa: primeiro nome + último nome | Incompleta: e-mail sem o @...
+// Exibe como no Vercel: usa username quando disponível, senão nome/email
 const nomeExibido = computed(() => {
   const u = baba.value?.usuario ?? {}
 
-  if (perfilCompleto.value) {
-    return [u.primeiro_nome, u.ultimo_nome]
-      .filter(Boolean)
-      .join(' ')
-      .trim()
+  if (u.username) {
+    return u.username
+  }
+
+  const nome = [u.primeiro_nome, u.ultimo_nome].filter(Boolean).join(' ')
+  if (nome.trim()) {
+    return nome.trim()
   }
 
   return String(u.email || '').split('@')[0] || 'Babá'
 })
 
-const localizacao = computed(() => {
+const fotoUrl = computed(() => baba.value?.usuario?.foto?.url || '')
+
+function mascarar(valor: string | null | undefined, regex: RegExp, formato: string) {
+  const digitos = String(valor ?? '').replace(/\D/g, '')
+  return regex.test(digitos) ? digitos.replace(regex, formato) : (valor || '')
+}
+
+function formatarData(data: string | null | undefined) {
+  if (!data) return ''
+  const [ano, mes, dia] = String(data).split('-')
+  return `${dia}/${mes}/${ano}`
+}
+
+// Dados pessoais: aparecem só aqui, para a própria babá
+const dadosPessoais = computed(() => {
   const u = baba.value?.usuario ?? {}
-  return [u.bairro, u.cidade].filter(Boolean).join(', ')
+  const p = baba.value ?? {}
+  const telefone = String(u.telefone ?? '').replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, '')
+
+  return [
+    { rotulo: '📧 E-mail', valor: u.email },
+    { rotulo: '📞 Telefone', valor: mascarar(telefone, /^(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3') },
+    { rotulo: '🪪 CPF', valor: mascarar(u.cpf, /^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4') },
+    { rotulo: '🎂 Nascimento', valor: formatarData(p.dtnasc) },
+    { rotulo: '📮 CEP', valor: mascarar(u.cep, /^(\d{5})(\d{3})$/, '$1-$2') },
+    { rotulo: '📍 Localização', valor: [u.cidade, u.bairro].filter(Boolean).join(', ') },
+    { rotulo: '💠 Chave Pix', valor: p.chave_pix },
+  ].map((item) => ({ ...item, valor: item.valor || 'Não informado' }))
 })
+
+const dadosProfissionais = computed(() => {
+  const p = baba.value ?? {}
+  const anos = Number(p.experiencia_anos || 0)
+
+  return [
+    { rotulo: '💰 Valor/hora', valor: `R$ ${Number(p.valor_hora ?? 0).toFixed(2)}` },
+    { rotulo: '🕐 Experiência', valor: `${anos} ${anos === 1 ? 'ano' : 'anos'}` },
+    { rotulo: '🎓 Formação', valor: p.formacao || 'Não informada' },
+    { rotulo: '🎯 Habilidades', valor: p.habilidades || 'Não informadas' },
+  ]
+})
+
+const DIAS_SEMANA = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+
+// Dias sem valor salvo contam como disponíveis (padrão do backend)
+const disponibilidade = computed<Record<string, boolean>>(() =>
+  Object.fromEntries(
+    DIAS_SEMANA.map((dia) => [dia, baba.value?.disponibilidade?.[dia] !== false])
+  )
+)
+
+const salvandoDia = ref<string | null>(null)
+const erroDisponibilidade = ref('')
+
+async function alternarDia(dia: string) {
+  if (salvandoDia.value) return
+
+  const anterior = { ...disponibilidade.value }
+  const nova = { ...anterior, [dia]: !anterior[dia] }
+
+  salvandoDia.value = dia
+  erroDisponibilidade.value = ''
+  baba.value = { ...baba.value, disponibilidade: nova }
+
+  try {
+    const { data } = await api.patch('/perfil-baba/me/', { disponibilidade: nova })
+    baba.value = { ...baba.value, disponibilidade: data.disponibilidade }
+  } catch (e: any) {
+    baba.value = { ...baba.value, disponibilidade: anterior }
+    erroDisponibilidade.value =
+      e?.response?.data?.disponibilidade?.[0] ||
+      'Não foi possível salvar a disponibilidade. Tente novamente.'
+  } finally {
+    salvandoDia.value = null
+  }
+}
 
 function irParaFormulario() {
   router.push('/completar-perfil-baba')
@@ -74,23 +149,18 @@ async function carregarDados() {
     const { data: usuario } = await meRequest()
     authStore.setUsuario(usuario)
 
-    // Busca o perfil da babá logada (independe de completude)
+    // A completude é calculada só com os dados da própria babá (/me/).
+    // Não usar a lista pública de babás: ela é cacheada no store e esconde
+    // a chave Pix, o que faria um perfil completo parecer incompleto.
     const { data: perfil } = await api.get('/perfil-baba/me/')
     baba.value = perfil
-
-    // Busca todos os agendamentos
-    const { data } = await api.get('/agendamentos/')
-
-    const lista = data.results || data
-
-    // Filtra somente os da babá logada
-    solicitacoes.value = lista.filter(
-      (ag: any) => ag.baba === baba.value.id
-    )
-
-  } catch (err) {
+  } catch (err: any) {
     console.error(err)
-    erro.value = 'Erro ao carregar os dados.'
+    baba.value = null
+    erro.value =
+      err?.response?.status === 404
+        ? 'Perfil de babá não encontrado.'
+        : 'Não foi possível carregar seu perfil agora. Tente novamente.'
   } finally {
     carregando.value = false
   }
@@ -106,152 +176,104 @@ onMounted(carregarDados)
       <h3>Carregando...</h3>
     </div>
 
-    <div v-else-if="erro" class="card erro">
-      {{ erro }}
+    <div v-else-if="erro && !baba" class="card erro">
+      <p>{{ erro }}</p>
+      <button class="btn-formulario" type="button" @click="carregarDados">
+        Tentar novamente
+      </button>
     </div>
 
     <template v-else-if="baba">
 
-      <!-- Cabeçalho -->
-      <div class="card perfil">
-
-        <div class="identidade">
-
-          <img
-            v-if="perfilCompleto && baba.usuario?.foto?.url"
-            :src="baba.usuario.foto.url"
-            alt="Foto da babá"
-            class="foto"
-          />
-          <div v-else class="foto foto-vazia">
-            👤
-          </div>
-
+      <!-- Perfil incompleto -->
+      <template v-if="!perfilCompleto">
+        <div class="card identidade">
+          <div class="foto-pequena foto-vazia">👤</div>
           <div>
             <h2>{{ nomeExibido }}</h2>
-
-            <span v-if="!perfilCompleto" class="aviso">
-              Perfil incompleto
-            </span>
-
-            <p v-if="perfilCompleto && localizacao" class="localizacao">
-              📍 {{ localizacao }}
-            </p>
+            <span class="aviso">Perfil incompleto</span>
           </div>
-
         </div>
 
-        <template v-if="perfilCompleto">
-
-          <p v-if="baba.descricao" class="descricao">
-            {{ baba.descricao }}
-          </p>
-
-          <div class="info-linha">
-            <span>
-              🕐 {{ baba.experiencia_anos }}
-              {{ baba.experiencia_anos === 1 ? 'ano' : 'anos' }} de experiência
-            </span>
-
-            <span v-if="baba.habilidades" class="habilidades">
-              🎯 {{ baba.habilidades }}
-            </span>
-          </div>
-
-          <p class="preco">
-            R$ {{ baba.valor_hora ?? '0,00' }}
-            /hora
-          </p>
-
-        </template>
-
-      </div>
-
-      <!-- Formulário (perfil incompleto) -->
-      <div v-if="!perfilCompleto" class="card formulario">
-        <h3>Complete seu perfil</h3>
-        <p>
-          Falta pouco! Preencha o formulário para que as famílias
-          possam encontrar você.
-        </p>
-
-        <button
-          class="btn-formulario"
-          @click="irParaFormulario"
-        >
-          Abrir formulário
-        </button>
-      </div>
-
-      <!-- Solicitações (perfil completo) -->
-      <div v-if="perfilCompleto" class="solicitacoes">
-
-        <h3>
-          Solicitações de agendamento
-        </h3>
-
-        <div
-          v-if="solicitacoes.length === 0"
-          class="card"
-        >
+        <div class="card formulario">
+          <h3>Complete seu perfil</h3>
           <p>
-            Nenhuma solicitação encontrada.
+            Falta pouco! Preencha o formulário para que as famílias
+            possam encontrar você.
           </p>
+
+          <button class="btn-formulario" @click="irParaFormulario">
+            Abrir formulário
+          </button>
         </div>
+      </template>
 
-        <div
-          class="card"
-          v-for="s in solicitacoes"
-          :key="s.id"
-        >
+      <!-- Perfil completo: foto, nome e dados (visíveis só para a própria babá) -->
+      <template v-else>
+        <section class="card perfil">
+          <img v-if="fotoUrl" :src="fotoUrl" :alt="nomeExibido" class="foto" />
+          <div v-else class="foto foto-vazia">👤</div>
 
-          <div class="sol-topo">
+          <h1>{{ nomeExibido }}</h1>
 
-            <span class="familia">
-              {{ s.nome_pai || 'Família' }}
-            </span>
-
-            <span class="tempo">
-              {{ s.data }}
-            </span>
-
-          </div>
-
-          <p>
-            {{ s.qtd_criancas }}
-            criança(s)
-          </p>
-
-          <p>
-            {{ s.hora_inicio }}
-            às
-            {{ s.hora_fim }}
-          </p>
-
-          <p>
-            Valor:
-            R$ {{ s.preco }}
-          </p>
-
-        </div>
-
-      </div>
-
-      <!-- Rodapé -->
-      <footer class="rodape">
-        <span>BabyCorporation © {{ ano }}</span>
-
-        <div v-if="perfilCompleto" class="contato">
-          <span>📧 {{ baba.usuario?.email }}</span>
-          <span v-if="baba.usuario?.telefone">
-            📞 {{ baba.usuario.telefone }}
+          <span class="disponivel" :class="{ indisponivel: !baba.disponivel }">
+            {{ baba.disponivel ? 'Disponível' : 'Indisponível' }}
           </span>
-          <span v-if="localizacao">
-            📍 {{ localizacao }}
-          </span>
-        </div>
+        </section>
 
-      </footer>
+        <section class="card">
+          <h2 class="titulo-secao">Disponibilidade</h2>
+          <p class="dica">
+            Toque num dia para mudar. Vale para os próximos pedidos; os
+            agendamentos já marcados continuam iguais.
+          </p>
+
+          <div class="dias">
+            <button
+              v-for="dia in DIAS_SEMANA"
+              :key="dia"
+              type="button"
+              class="dia"
+              :class="disponibilidade[dia] ? 'livre' : 'ocupado'"
+              :disabled="salvandoDia !== null"
+              :aria-pressed="disponibilidade[dia]"
+              @click="alternarDia(dia)"
+            >
+              {{ dia }}
+              <span class="dia-status">
+                {{ salvandoDia === dia ? 'Salvando...' : disponibilidade[dia] ? 'Disponível' : 'Indisponível' }}
+              </span>
+            </button>
+          </div>
+
+          <p v-if="erroDisponibilidade" class="erro-texto">{{ erroDisponibilidade }}</p>
+        </section>
+
+        <section class="card">
+          <h2 class="titulo-secao">Dados pessoais</h2>
+          <div class="grade">
+            <div v-for="item in dadosPessoais" :key="item.rotulo" class="item">
+              <span class="rotulo">{{ item.rotulo }}</span>
+              <span>{{ item.valor }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2 class="titulo-secao">Dados profissionais</h2>
+          <div class="grade">
+            <div v-for="item in dadosProfissionais" :key="item.rotulo" class="item">
+              <span class="rotulo">{{ item.rotulo }}</span>
+              <span>{{ item.valor }}</span>
+            </div>
+          </div>
+
+          <div v-if="baba.descricao" class="sobre">
+            <span class="rotulo">💬 Sobre mim</span>
+            <p>{{ baba.descricao }}</p>
+          </div>
+        </section>
+      </template>
 
     </template>
 
@@ -266,41 +288,32 @@ onMounted(carregarDados)
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .card {
   background: white;
   border-radius: 14px;
-  padding: 16px;
+  padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
 }
 
-.perfil {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
+/* Perfil incompleto */
 .identidade {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-.foto {
+.foto-pequena {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  object-fit: cover;
   flex-shrink: 0;
-}
-
-.foto-vazia {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 30px;
-  background: #F3F4F6;
+  font-size: 30px !important;
 }
 
 h2 {
@@ -317,43 +330,6 @@ h2 {
   background: #FEF3C7;
   padding: 2px 10px;
   border-radius: 999px;
-}
-
-.localizacao {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: #666;
-}
-
-.info-linha {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 13px;
-  color: #666;
-}
-
-.habilidades {
-  background: #F3F4F6;
-  padding: 4px 10px;
-  border-radius: 10px;
-}
-
-.preco {
-  color: #F6339A;
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-}
-
-.descricao {
-  background: #F3F4F6;
-  border-radius: 8px;
-  padding: 12px;
-  color: #555;
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0;
 }
 
 .formulario h3 {
@@ -379,47 +355,147 @@ h2 {
   cursor: pointer;
 }
 
-.solicitacoes h3 {
-  margin-bottom: 12px;
-  font-size: 18px;
-}
-
-.sol-topo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.familia {
-  font-weight: bold;
-  font-size: 15px;
-}
-
-.tempo {
-  color: #F6339A;
-  font-size: 13px;
-}
-
-.solicitacoes p {
-  margin: 4px 0;
-  color: #666;
-}
-
-.rodape {
-  margin-top: auto;
-  padding: 14px 4px;
+/* Perfil completo */
+.perfil {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-size: 13px;
-  color: #888;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
 }
 
-.contato {
+.perfil h1 {
+  font-size: 24px;
+  margin: 0;
+  color: #1f2937;
+}
+
+.foto {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.foto-vazia {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  background: #F3F4F6;
+}
+
+.disponivel {
+  display: inline-block;
+  background: #22c55e;
+  color: white;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: bold;
+}
+
+.disponivel.indisponivel {
+  background: #9ca3af;
+}
+
+.titulo-secao {
+  font-size: 17px;
+  margin: 0 0 12px;
+  text-align: center;
+  color: #1f2937;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.item {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: #333;
+  overflow-wrap: anywhere;
+}
+
+.rotulo {
+  font-size: 12px;
+  font-weight: bold;
+  color: #F6339A;
+}
+
+.sobre {
+  margin-top: 10px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.sobre p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.dica {
+  margin: -4px 0 12px;
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.dias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.dia {
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: background .15s, color .15s;
+}
+
+.dia:disabled {
+  cursor: wait;
+  opacity: .7;
+}
+
+.dia.livre {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.dia.ocupado {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+.dia-status {
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.erro-texto {
+  margin: 10px 0 0;
+  color: #B91C1C;
+  font-size: 13px;
+  text-align: center;
 }
 
 .erro {

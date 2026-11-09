@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Menu, X, Baby } from 'lucide-vue-next';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
+const authStore = useAuthStore();
 const menuAberto = ref(false);
+
+const usuario = computed(() => authStore.usuario);
+const ehBaba = computed(() => usuario.value?.tipo === 'BABA');
+const ehPai = computed(() => usuario.value?.tipo === 'PAI');
+const estaAutenticado = computed(() => authStore.estaAutenticado);
 
 const toggleMenu = () => {
   menuAberto.value = !menuAberto.value;
@@ -17,6 +24,12 @@ const fecharMenu = () => {
 const navegarPara = (rota: string) => {
   router.push(rota);
   fecharMenu();
+};
+
+const sair = () => {
+  authStore.logout();
+  fecharMenu();
+  router.push('/');
 };
 </script>
 
@@ -31,15 +44,28 @@ const navegarPara = (rota: string) => {
 
       <!-- Menu desktop -->
       <nav class="menu-desktop">
-        <a @click="navegarPara('/')">Início</a>
-        <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
-        <a @click="navegarPara('/Agendamento')">Agendamento</a>
-        <a @click="navegarPara('/CalendarioView')">Calendario</a>
+        <template v-if="estaAutenticado && ehBaba">
+          <a @click="navegarPara('/home-baba')">Home</a>
+          <a @click="navegarPara('/agendamentos-baba')">Agendamentos</a>
+        </template>
+        <template v-else-if="estaAutenticado && ehPai">
+          <a @click="navegarPara('/home-familia')">Home</a>
+          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+        </template>
+        <template v-else>
+          <a @click="navegarPara('/')">Início</a>
+          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+        </template>
       </nav>
 
       <div class="acoes-desktop">
-        <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
-        <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
+        <template v-if="estaAutenticado">
+          <button class="btn-outline" @click="sair">Sair</button>
+        </template>
+        <template v-else>
+          <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
+          <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
+        </template>
       </div>
 
       <!-- Botão hamburguer (mobile) -->
@@ -52,13 +78,26 @@ const navegarPara = (rota: string) => {
     <!-- Menu mobile (dropdown) -->
     <transition name="slide">
       <nav v-if="menuAberto" class="menu-mobile">
-        <a @click="navegarPara('/')">Início</a>
-        <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
-        <a @click="navegarPara('/Agendamento')">Agendamento</a>
-        <a @click="navegarPara('/CalendarioView')">Calendario</a>
+        <template v-if="estaAutenticado && ehBaba">
+          <a @click="navegarPara('/home-baba')">Home</a>
+          <a @click="navegarPara('/agendamentos-baba')">Agendamentos</a>
+        </template>
+        <template v-else-if="estaAutenticado && ehPai">
+          <a @click="navegarPara('/home-familia')">Home</a>
+          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+        </template>
+        <template v-else>
+          <a @click="navegarPara('/')">Início</a>
+          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+        </template>
         <hr />
-        <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
-        <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
+        <template v-if="estaAutenticado">
+          <button class="btn-outline" @click="sair">Sair</button>
+        </template>
+        <template v-else>
+          <button class="btn-outline" @click="navegarPara('/login')">Entrar</button>
+          <button class="btn-solido" @click="navegarPara('/cadastro-baba')">Cadastre-se</button>
+        </template>
       </nav>
     </transition>
 

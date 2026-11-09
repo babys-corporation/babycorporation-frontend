@@ -23,6 +23,10 @@ interface BabaInterface{
             url: string | undefined
         } | null,
         "telefone": string | null,
+        "cpf": string | null,
+        "cep": string | null,
+        "cidade": string | null,
+        "bairro": string | null,
         "groups": [],
         "user_permissions": []
     },
