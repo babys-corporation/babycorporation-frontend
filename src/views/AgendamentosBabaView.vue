@@ -204,62 +204,92 @@ onMounted(carregar)
 </template>
 
 <style scoped>
+/* ── Base ─────────────────────────────────────────── */
 .pagina {
-  padding: 16px;
+  --rosa: #F6339A;
+  --texto: #1f2937;
+  --texto-suave: #6b7280;
+  --borda: #f1f1f4;
+
+  padding: 20px 16px 40px;
   background: #F9FAFB;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 800px;
+  gap: 18px;
+  max-width: 820px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
 }
 
 h1 {
-  font-size: 26px;
+  font-size: 28px;
   text-align: center;
-  margin: 0;
+  margin: 4px 0 0;
+  color: var(--texto);
 }
 
 .card {
   background: white;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+  border: 1px solid var(--borda);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 4px 18px rgba(17, 24, 39, .06);
 }
 
 .card h2 {
-  font-size: 17px;
-  margin: 0 0 12px;
+  font-size: 19px;
+  margin: 0 0 6px;
   text-align: center;
-  color: #1f2937;
+  color: var(--texto);
+}
+
+/* traço rosa sob o título da seção */
+.card h2::after {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 3px;
+  margin: 8px auto 4px;
+  border-radius: 999px;
+  background: var(--rosa);
 }
 
 .vazio {
-  color: #6b7280;
-  font-size: 14px;
+  color: var(--texto-suave);
+  font-size: 15px;
   text-align: center;
-  padding: 12px 0;
+  padding: 18px 0 6px;
   margin: 0;
 }
 
+/* ── Card de agendamento ──────────────────────────── */
 .agendamento {
-  border: 1px solid #F3F4F6;
+  border: 1px solid var(--borda);
   border-left: 4px solid #F59E0B;
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin-top: 10px;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-top: 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 15px;
+  line-height: 1.5;
   color: #374151;
+  text-align: left;
+  background: #fff;
+  transition: box-shadow .15s, transform .15s;
+}
+
+.agendamento:hover {
+  box-shadow: 0 6px 16px rgba(17, 24, 39, .07);
+  transform: translateY(-1px);
 }
 
 .agendamento p {
   margin: 0;
+  text-align: left;
 }
 
 .agendamento.confirmado {
@@ -269,37 +299,72 @@ h1 {
 .ag-topo {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 2px;
+}
+
+.ag-topo strong {
+  font-size: 17px;
+  color: var(--texto);
+  text-transform: capitalize;
+  overflow-wrap: anywhere;
 }
 
 .ag-valor {
-  color: #F6339A;
+  color: var(--rosa);
   font-weight: bold;
+  font-size: 18px;
+  white-space: nowrap;
 }
 
+/* selo de status do pagamento */
 .ag-status {
-  color: #b45309;
+  align-self: flex-start;
+  margin-top: 4px !important;
+  padding: 4px 12px;
+  border-radius: 999px;
   font-size: 13px;
+  font-weight: 600;
+  color: #B45309;
+  background: #FEF3C7;
 }
 
+.agendamento.confirmado .ag-status {
+  color: #15803D;
+  background: #DCFCE7;
+}
+
+/* ── Ações ────────────────────────────────────────── */
 .acoes {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .acoes button {
+  /* anula o estilo global de button (fit-content, margin auto, sombra) */
   flex: 1;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 14px;
+  width: auto;
+  margin: 0;
+  box-shadow: none;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
   font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
+  transition: filter .15s, background .15s;
 }
 
 .acoes button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.acoes button:focus-visible {
+  outline: 3px solid rgba(246, 51, 154, .35);
+  outline-offset: 2px;
 }
 
 .btn-aceitar {
@@ -308,15 +373,86 @@ h1 {
   color: white;
 }
 
+.btn-aceitar:hover:not(:disabled) {
+  filter: brightness(.95);
+}
+
 .btn-recusar {
   border: 1.5px solid #ef4444;
   background: white;
   color: #ef4444;
 }
 
+.btn-recusar:hover:not(:disabled) {
+  background: #FEF2F2;
+}
+
 .erro {
   text-align: center;
   color: #B91C1C;
   background: #FEE2E2;
+  border-color: #FECACA;
+}
+
+/* ── Responsivo ───────────────────────────────────── */
+@media (max-width: 480px) {
+  .pagina {
+    padding: 14px 12px 32px;
+    gap: 14px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .card {
+    padding: 18px 14px;
+    border-radius: 16px;
+  }
+
+  .agendamento {
+    padding: 14px;
+    font-size: 14px;
+  }
+
+  .ag-topo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .acoes {
+    flex-direction: column;
+  }
+}
+
+/* Desktop largo: pedidos e confirmados lado a lado */
+@media (min-width: 1024px) {
+  .pagina {
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    align-content: start;
+  }
+
+  .pagina > * {
+    grid-column: 1 / -1;
+  }
+
+  .pagina > section.card {
+    grid-column: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agendamento,
+  .acoes button {
+    transition: none;
+  }
+
+  .agendamento:hover {
+    transform: none;
+  }
 }
 </style>

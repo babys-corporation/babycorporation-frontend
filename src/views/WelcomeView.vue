@@ -2,7 +2,17 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import BabaCard from '@/componentes/cards/BabaCard.vue';
-import { Shield, Star, Clock, ArrowRight } from 'lucide-vue-next';
+import {
+  ArrowRight,
+  Clock,
+  HeartHandshake,
+  MessagesSquare,
+  Search,
+  Shield,
+  SlidersHorizontal,
+  Star,
+  UserPlus,
+} from 'lucide-vue-next';
 
 const router = useRouter();
 
@@ -43,6 +53,7 @@ const navegarParaCadastrobaba =  () =>{
         <img src="../assets/images/menina-balanco.png" alt="menina-balanco">
         <div>
             <button @click="navegarParaBusca">
+                <Search :size="18" aria-hidden="true" />
                 Encontrar Babás
             </button>
         </div>
@@ -91,13 +102,13 @@ const navegarParaCadastrobaba =  () =>{
 
     <section class="comofunciona">
         <h1>Como funciona</h1>
-        <p class="subtitulo">Encontre sua babá ideal in 3 passos simples</p>
+        <p class="subtitulo">Encontre sua babá ideal em 3 passos simples</p>
 
         <div class="passos">
             <div class="passo">
                 <div class="numero">1</div>
                 <div class="texto">
-                    <h3>Busque e Filtre</h3>
+                    <h3><SlidersHorizontal :size="18" aria-hidden="true" /> Busque e Filtre</h3>
                     <p>Navegue por perfis de babás, filtre por localização, experiência e disponibilidade.</p>
                 </div>
             </div>
@@ -105,7 +116,7 @@ const navegarParaCadastrobaba =  () =>{
             <div class="passo">
                 <div class="numero">2</div>
                 <div class="texto">
-                    <h3>Conheça e Entreviste</h3>
+                    <h3><MessagesSquare :size="18" aria-hidden="true" /> Conheça e Entreviste</h3>
                     <p>Entre em contato com as babás que mais combinam com você e agende uma entrevista.</p>
                 </div>
             </div>
@@ -113,7 +124,7 @@ const navegarParaCadastrobaba =  () =>{
             <div class="passo">
                 <div class="numero">3</div>
                 <div class="texto">
-                    <h3>Contrate com Confiança</h3>
+                    <h3><HeartHandshake :size="18" aria-hidden="true" /> Contrate com Confiança</h3>
                     <p>Escolha a babá perfeita e tenha tranquilidade sabendo que seus filhos estão em boas mãos.</p>
                 </div>
             </div>
@@ -123,8 +134,16 @@ const navegarParaCadastrobaba =  () =>{
     <section class="prontacomecar">
         <h1>Pronta para começar?</h1>
         <p>Cadastre-se agora e encontre a babá perfeita para sua família</p>
-        <button @click="navegarParaBusca">Encontrar Babás</button>
-        <button class="inverso" @click="navegarParaCadastro">Cadastrar como Usuario</button>
+        <div class="cta-botoes">
+            <button @click="navegarParaBusca">
+                <Search :size="18" aria-hidden="true" />
+                Encontrar Babás
+            </button>
+            <button class="inverso" @click="navegarParaCadastro">
+                <UserPlus :size="18" aria-hidden="true" />
+                Cadastrar como Usuário
+            </button>
+        </div>
     </section>
 </template>
 
@@ -619,6 +638,257 @@ div.seta-rosa {
 @media (max-width: 560px) {
     .prontacomecar button {
         margin: 0 auto 12px;
+    }
+}
+</style>
+
+<style scoped>
+/*====================================================
+    Refinamentos só desta página (o <style> global acima
+    continua igual, pois define tokens/botões do site todo)
+====================================================*/
+
+/* ícones dentro dos botões */
+button {
+    gap: 8px;
+}
+
+/* ── Hero ───────────────────────────────────────── */
+.encontreababa {
+    background: #FFF5FA;
+    padding: 72px 20px 64px;
+}
+
+.encontreababa h2 {
+    font-size: clamp(30px, 4.4vw, 50px);
+    margin-bottom: 16px;
+}
+
+.encontreababa p {
+    font-size: 17px;
+}
+
+.encontreababa img {
+    max-width: 260px;
+    margin: 36px auto 8px;
+}
+
+.encontreababa > div button {
+    margin-top: 16px;
+}
+
+/* desktop: texto à esquerda, ilustração à direita */
+@media (min-width: 900px) {
+    .encontreababa {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        grid-template-rows: auto auto 1fr;
+        column-gap: 48px;
+        align-items: center;
+        max-width: none;
+        padding: 88px max(48px, calc((100vw - 1080px) / 2)) 80px;
+        text-align: left;
+    }
+
+    .encontreababa h2 {
+        grid-column: 1;
+        grid-row: 1;
+        margin: 0 0 18px;
+        align-self: end;
+    }
+
+    .encontreababa p {
+        grid-column: 1;
+        grid-row: 2;
+        margin: 0;
+    }
+
+    .encontreababa > div {
+        grid-column: 1;
+        grid-row: 3;
+        align-self: start;
+    }
+
+    .encontreababa > div button {
+        margin: 28px 0 0;
+    }
+
+    .encontreababa img {
+        grid-column: 2;
+        grid-row: 1 / span 3;
+        max-width: 340px;
+        margin: 0 auto;
+    }
+}
+
+/* ── Por que escolher ───────────────────────────── */
+.porqueescolher {
+    gap: 20px;
+    padding: 72px 20px 80px;
+}
+
+/* desktop: exatamente 3 cards por linha (sem coluna vazia à direita) */
+@media (min-width: 900px) {
+    .porqueescolher {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.porqueescolher > div {
+    border-radius: 20px;
+    padding: 32px 24px;
+    box-shadow: 0 4px 18px rgba(42, 33, 64, .05);
+}
+
+.porqueescolher > div:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(236, 63, 147, .14);
+}
+
+.porqueescolher h2 {
+    font-size: 19px;
+}
+
+.icone-escudo,
+.icone-estrela,
+.icone-relogio {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    margin-bottom: 18px;
+}
+
+.icone-escudo { background: #FCE7F3; }
+.icone-estrela { background: #F1E5FF; }
+.icone-relogio { background: #DCEBFF; }
+
+/* ── Babás em destaque ──────────────────────────── */
+.babasdestaque {
+    padding: 72px 20px 80px;
+    background: #FFF5FA;
+}
+
+.babasdestaque > p {
+    margin-bottom: 32px;
+}
+
+/* ── Como funciona ──────────────────────────────── */
+.comofunciona {
+    background: var(--cor-fundo);
+    padding: 80px 20px;
+}
+
+.comofunciona .subtitulo {
+    margin-bottom: 44px;
+}
+
+.comofunciona .numero {
+    background: var(--rosa);
+}
+
+.comofunciona .texto {
+    border-radius: 16px;
+}
+
+.comofunciona .texto h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--cor-tinta);
+}
+
+.comofunciona .texto h3 svg {
+    color: var(--rosa);
+    flex-shrink: 0;
+}
+
+/* desktop: 3 passos lado a lado */
+@media (min-width: 900px) {
+    .passos {
+        max-width: 1080px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+
+    .passos::before {
+        left: 16%;
+        right: 16%;
+        top: 22px;
+        bottom: auto;
+        width: auto;
+        height: 2px;
+        background-image: linear-gradient(90deg, var(--anel-rosa) 60%, transparent 0%);
+        background-size: 12px 2px;
+        background-repeat: repeat-x;
+    }
+
+    .passo {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 0;
+        gap: 18px;
+    }
+
+    .passo .texto {
+        width: 100%;
+        height: 100%;
+    }
+
+    .passo:hover .texto {
+        transform: translateY(-4px);
+    }
+
+    .comofunciona .texto h3 {
+        justify-content: center;
+    }
+}
+
+/* ── CTA final ──────────────────────────────────── */
+.prontacomecar {
+    padding: 80px 20px;
+}
+
+.cta-botoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.cta-botoes button {
+    margin: 0;
+}
+
+@media (max-width: 560px) {
+    .encontreababa {
+        padding: 56px 16px 48px;
+    }
+
+    .porqueescolher,
+    .babasdestaque,
+    .comofunciona,
+    .prontacomecar {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .cta-botoes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cta-botoes button {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .encontreababa::before,
+    .encontreababa::after,
+    .encontreababa img {
+        animation: none;
     }
 }
 </style>

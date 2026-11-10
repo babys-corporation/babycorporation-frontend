@@ -4,6 +4,21 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { meRequest } from '@/api/auth'
 import api from '@/api/config'
+import {
+  Banknote,
+  Cake,
+  Clock,
+  GraduationCap,
+  IdCard,
+  KeyRound,
+  Mail,
+  Mailbox,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Sparkles,
+  User,
+} from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -79,13 +94,13 @@ const dadosPessoais = computed(() => {
   const telefone = String(u.telefone ?? '').replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, '')
 
   return [
-    { rotulo: '📧 E-mail', valor: u.email },
-    { rotulo: '📞 Telefone', valor: mascarar(telefone, /^(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3') },
-    { rotulo: '🪪 CPF', valor: mascarar(u.cpf, /^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4') },
-    { rotulo: '🎂 Nascimento', valor: formatarData(p.dtnasc) },
-    { rotulo: '📮 CEP', valor: mascarar(u.cep, /^(\d{5})(\d{3})$/, '$1-$2') },
-    { rotulo: '📍 Localização', valor: [u.cidade, u.bairro].filter(Boolean).join(', ') },
-    { rotulo: '💠 Chave Pix', valor: p.chave_pix },
+    { rotulo: 'E-mail', icone: Mail, valor: u.email },
+    { rotulo: 'Telefone', icone: Phone, valor: mascarar(telefone, /^(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3') },
+    { rotulo: 'CPF', icone: IdCard, valor: mascarar(u.cpf, /^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4') },
+    { rotulo: 'Nascimento', icone: Cake, valor: formatarData(p.dtnasc) },
+    { rotulo: 'CEP', icone: Mailbox, valor: mascarar(u.cep, /^(\d{5})(\d{3})$/, '$1-$2') },
+    { rotulo: 'Localização', icone: MapPin, valor: [u.cidade, u.bairro].filter(Boolean).join(', ') },
+    { rotulo: 'Chave Pix', icone: KeyRound, valor: p.chave_pix },
   ].map((item) => ({ ...item, valor: item.valor || 'Não informado' }))
 })
 
@@ -94,10 +109,10 @@ const dadosProfissionais = computed(() => {
   const anos = Number(p.experiencia_anos || 0)
 
   return [
-    { rotulo: '💰 Valor/hora', valor: `R$ ${Number(p.valor_hora ?? 0).toFixed(2)}` },
-    { rotulo: '🕐 Experiência', valor: `${anos} ${anos === 1 ? 'ano' : 'anos'}` },
-    { rotulo: '🎓 Formação', valor: p.formacao || 'Não informada' },
-    { rotulo: '🎯 Habilidades', valor: p.habilidades || 'Não informadas' },
+    { rotulo: 'Valor/hora', icone: Banknote, valor: `R$ ${Number(p.valor_hora ?? 0).toFixed(2)}` },
+    { rotulo: 'Experiência', icone: Clock, valor: `${anos} ${anos === 1 ? 'ano' : 'anos'}` },
+    { rotulo: 'Formação', icone: GraduationCap, valor: p.formacao || 'Não informada' },
+    { rotulo: 'Habilidades', icone: Sparkles, valor: p.habilidades || 'Não informadas' },
   ]
 })
 
@@ -188,7 +203,7 @@ onMounted(carregarDados)
       <!-- Perfil incompleto -->
       <template v-if="!perfilCompleto">
         <div class="card identidade">
-          <div class="foto-pequena foto-vazia">👤</div>
+          <div class="foto-pequena foto-vazia"><User :size="32" aria-hidden="true" /></div>
           <div>
             <h2>{{ nomeExibido }}</h2>
             <span class="aviso">Perfil incompleto</span>
@@ -212,7 +227,7 @@ onMounted(carregarDados)
       <template v-else>
         <section class="card perfil">
           <img v-if="fotoUrl" :src="fotoUrl" :alt="nomeExibido" class="foto" />
-          <div v-else class="foto foto-vazia">👤</div>
+          <div v-else class="foto foto-vazia"><User :size="52" aria-hidden="true" /></div>
 
           <h1>{{ nomeExibido }}</h1>
 
@@ -253,7 +268,10 @@ onMounted(carregarDados)
           <h2 class="titulo-secao">Dados pessoais</h2>
           <div class="grade">
             <div v-for="item in dadosPessoais" :key="item.rotulo" class="item">
-              <span class="rotulo">{{ item.rotulo }}</span>
+              <span class="rotulo">
+                <component :is="item.icone" :size="14" aria-hidden="true" />
+                {{ item.rotulo }}
+              </span>
               <span>{{ item.valor }}</span>
             </div>
           </div>
@@ -263,13 +281,19 @@ onMounted(carregarDados)
           <h2 class="titulo-secao">Dados profissionais</h2>
           <div class="grade">
             <div v-for="item in dadosProfissionais" :key="item.rotulo" class="item">
-              <span class="rotulo">{{ item.rotulo }}</span>
+              <span class="rotulo">
+                <component :is="item.icone" :size="14" aria-hidden="true" />
+                {{ item.rotulo }}
+              </span>
               <span>{{ item.valor }}</span>
             </div>
           </div>
 
           <div v-if="baba.descricao" class="sobre">
-            <span class="rotulo">💬 Sobre mim</span>
+            <span class="rotulo">
+              <MessageCircle :size="14" aria-hidden="true" />
+              Sobre mim
+            </span>
             <p>{{ baba.descricao }}</p>
           </div>
         </section>
@@ -281,14 +305,24 @@ onMounted(carregarDados)
 </template>
 
 <style scoped>
+/* ── Base ─────────────────────────────────────────── */
 .pagina {
-  padding: 16px;
+  --rosa: #F6339A;
+  --roxo: #8b5cf6;
+  --degrade: linear-gradient(135deg, #ff2f92, #8b5cf6);
+  --texto: #1f2937;
+  --texto-suave: #6b7280;
+  --fundo-item: #fafafa;
+  --borda: #f1f1f4;
+  --sombra: 0 4px 18px rgba(17, 24, 39, .06);
+
+  padding: 20px 16px 40px;
   background: #F9FAFB;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 800px;
+  gap: 18px;
+  max-width: 820px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
@@ -296,12 +330,13 @@ onMounted(carregarDados)
 
 .card {
   background: white;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+  border: 1px solid var(--borda);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: var(--sombra);
 }
 
-/* Perfil incompleto */
+/* ── Perfil incompleto (sem alterações visuais grandes) ── */
 .identidade {
   display: flex;
   align-items: center;
@@ -320,6 +355,7 @@ h2 {
   font-size: 22px;
   font-weight: bold;
   margin: 0;
+  color: var(--texto);
 }
 
 .aviso {
@@ -346,38 +382,54 @@ h2 {
 .btn-formulario {
   width: 100%;
   border: none;
-  border-radius: 10px;
-  padding: 12px;
-  background: linear-gradient(135deg, #ff2f92, #8b5cf6);
+  border-radius: 12px;
+  padding: 13px;
+  background: var(--degrade);
   color: white;
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
+  box-shadow: 0 6px 16px rgba(246, 51, 154, .25);
+  transition: transform .15s, box-shadow .15s;
 }
 
-/* Perfil completo */
+.btn-formulario:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(246, 51, 154, .32);
+}
+
+/* ── Cabeçalho do perfil completo ─────────────────── */
 .perfil {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 10px;
+  gap: 8px;
+  padding-top: 28px;
 }
 
 .perfil h1 {
-  font-size: 24px;
-  margin: 0;
-  color: #1f2937;
+  font-size: 26px;
+  margin: 6px 0 0;
+  color: var(--texto);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .foto {
-  width: 120px;
-  height: 120px;
+  width: 128px;
+  height: 128px;
   border-radius: 50%;
   object-fit: cover;
+  border: 5px solid white;
+  box-shadow: 0 6px 18px rgba(246, 51, 154, .2);
+  background: white;
 }
 
 .foto-vazia {
+  color: #c4c8d0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -386,69 +438,108 @@ h2 {
 }
 
 .disponivel {
-  display: inline-block;
-  background: #22c55e;
-  color: white;
-  font-size: 11px;
-  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #DCFCE7;
+  color: #15803D;
+  font-size: 12px;
+  padding: 4px 12px;
   border-radius: 999px;
   font-weight: bold;
 }
 
-.disponivel.indisponivel {
-  background: #9ca3af;
+.disponivel::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
+.disponivel.indisponivel {
+  background: #F3F4F6;
+  color: #6b7280;
+}
+
+/* ── Títulos de seção ─────────────────────────────── */
 .titulo-secao {
   font-size: 17px;
-  margin: 0 0 12px;
+  margin: 0 0 14px;
   text-align: center;
-  color: #1f2937;
+  color: var(--texto);
 }
 
+.titulo-secao::after {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 3px;
+  margin: 8px auto 0;
+  border-radius: 999px;
+  background: var(--rosa);
+}
+
+/* ── Dados pessoais / profissionais ───────────────── */
 .grade {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 10px;
 }
 
 .item {
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 10px 12px;
+  background: var(--fundo-item);
+  border: 1px solid var(--borda);
+  border-left: 3px solid var(--rosa);
+  border-radius: 12px;
+  padding: 11px 14px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
   font-size: 14px;
   color: #333;
   overflow-wrap: anywhere;
+  transition: transform .15s, box-shadow .15s;
+}
+
+.item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(17, 24, 39, .06);
 }
 
 .rotulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 12px;
   font-weight: bold;
-  color: #F6339A;
+  color: var(--rosa);
+  letter-spacing: .2px;
 }
 
 .sobre {
-  margin-top: 10px;
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 10px 12px;
+  margin-top: 12px;
+  background: #FDF2F8;
+  border-radius: 12px;
+  padding: 12px 14px;
 }
 
 .sobre p {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   font-size: 14px;
-  color: #555;
-  line-height: 1.5;
+  color: #4b5563;
+  line-height: 1.6;
 }
 
+/* ── Disponibilidade ──────────────────────────────── */
 .dica {
-  margin: -4px 0 12px;
+  margin: -4px 0 14px;
   font-size: 13px;
-  color: #6b7280;
+  color: var(--texto-suave);
   text-align: center;
+  line-height: 1.5;
 }
 
 .dias {
@@ -458,17 +549,32 @@ h2 {
 }
 
 .dia {
-  border: none;
-  border-radius: 10px;
-  padding: 10px;
+  /* anula o estilo global de button (fit-content, margin auto, sombra) */
+  width: 100%;
+  margin: 0;
+  box-shadow: none;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 12px 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: inherit;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  transition: background .15s, color .15s;
+  gap: 3px;
+  transition: background .15s, color .15s, border-color .15s, transform .15s;
+}
+
+.dia:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.dia:focus-visible {
+  outline: none;
+  border-color: var(--roxo);
 }
 
 .dia:disabled {
@@ -481,18 +587,28 @@ h2 {
   color: #15803D;
 }
 
+.dia.livre:hover:not(:disabled) {
+  border-color: #86EFAC;
+}
+
 .dia.ocupado {
   background: #FEE2E2;
   color: #B91C1C;
 }
 
-.dia-status {
-  font-size: 11px;
-  font-weight: 400;
+.dia.ocupado:hover:not(:disabled) {
+  border-color: #FCA5A5;
 }
 
+.dia-status {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: .85;
+}
+
+/* ── Erros ────────────────────────────────────────── */
 .erro-texto {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   color: #B91C1C;
   font-size: 13px;
   text-align: center;
@@ -502,5 +618,91 @@ h2 {
   text-align: center;
   color: #B91C1C;
   background: #FEE2E2;
+  border-color: #FECACA;
+}
+
+.erro p {
+  margin: 0 0 12px;
+}
+
+/* ── Responsivo ───────────────────────────────────── */
+@media (max-width: 420px) {
+  .pagina {
+    padding: 14px 12px 32px;
+    gap: 14px;
+  }
+
+  .card {
+    padding: 18px 14px;
+    border-radius: 16px;
+  }
+
+  .foto {
+    width: 108px;
+    height: 108px;
+  }
+
+  .perfil h1 {
+    font-size: 22px;
+  }
+
+  .grade {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 600px) {
+  .dias {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 760px) {
+  .dias {
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .dia {
+    padding: 14px 6px;
+    font-size: 13px;
+  }
+}
+
+/* Desktop largo: dados pessoais e profissionais lado a lado */
+@media (min-width: 1024px) {
+  .pagina {
+    max-width: 980px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+
+  .pagina > * {
+    grid-column: 1 / -1;
+  }
+
+  .pagina > section.card:nth-last-of-type(-n + 2) {
+    grid-column: auto;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .grade {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .dia,
+  .btn-formulario {
+    transition: none;
+  }
+
+  .item:hover,
+  .dia:hover:not(:disabled),
+  .btn-formulario:hover {
+    transform: none;
+  }
 }
 </style>

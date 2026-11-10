@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MapPin, Clock } from 'lucide-vue-next';
+import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
 </script>
 
 <template>
@@ -7,7 +7,7 @@ import { MapPin, Clock } from 'lucide-vue-next';
     <div class="card">
       <div class="img-container">
         <img src="@/assets/images/julianasantos.png" alt="Juliana Santos" />
-        <span class="verificado">✔ Verificado</span>
+        <span class="verificado"><BadgeCheck :size="14" aria-hidden="true" /> Verificado</span>
       </div>
 
       <div class="info">
@@ -38,7 +38,7 @@ import { MapPin, Clock } from 'lucide-vue-next';
     <div class="card">
       <div class="img-container">
         <img src="@/assets/images/AnaPaulaCosta.png" alt="Ana Paula Costa" />
-        <span class="verificado">✔ Verificado</span>
+        <span class="verificado"><BadgeCheck :size="14" aria-hidden="true" /> Verificado</span>
       </div>
 
       <div class="info">
@@ -69,7 +69,7 @@ import { MapPin, Clock } from 'lucide-vue-next';
     <div class="card">
       <div class="img-container">
         <img src="@/assets/images/MariaSilva.png" alt="Maria Silva" />
-        <span class="verificado">✔ Verificado</span>
+        <span class="verificado"><BadgeCheck :size="14" aria-hidden="true" /> Verificado</span>
       </div>
 
       <div class="info">
@@ -128,6 +128,9 @@ import { MapPin, Clock } from 'lucide-vue-next';
 }
 
 .verificado {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   position: absolute;
   top: 10px;
   right: 10px;
