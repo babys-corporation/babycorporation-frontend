@@ -1,0 +1,32 @@
+:root {
+  /* Paleta "Ganhador" */
+  --rosa-claro:   #F4D2DE;
+  --rosa-fundo:   #F9EEF2;
+  --rosa-medio:   #D7B7C3;
+  --malva:        #9B7D8A;
+  --marrom:       #46343C;
+
+  /* Papéis (use estes nos componentes, não as cores cruas) */
+  --cor-fundo:        var(--rosa-fundo);
+  --cor-superficie:   #ffffff;
+  --cor-primaria:     var(--malva);   /* ícones, detalhes, links */
+  --cor-destaque:     var(--marrom);  /* botões principais, footer */
+  --cor-secundaria:   var(--rosa-medio);
+  --cor-suave:        var(--rosa-claro);
+  --cor-texto:        var(--marrom);
+  --cor-texto-suave:  var(--malva);
+  --cor-sucesso:      #22c55e;        /* selo "Verificado" */
+
+  --raio: 12px;
+  --sombra: 0 4px 12px rgba(70, 52, 60, 0.12);
+  --largura-max: 1200px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: 'Inter', system-ui, sans-serif;
+}

@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import WelcomeView from '@/views/WelcomeView\.vue'
+import WelcomeView from '@/views/WelcomeView.vue'
+import LoginView from '@/views/LoginView.vue'
 import HomeFamiliaView from '@/views/HomeFamiliaView.vue'
 import HomeBabaView from '@/views/HomeBabaView.vue'
 import BrowserBabaView from '@/views/BrowserBabaView.vue'
+import BabasDetalhesView from '@/views/BabasDetalhesView.vue'
 import CadastroBabaView from '@/views/CadastroBabaView.vue'
 import CadastroResponsavelView from '@/views/CadastroResponsavelView.vue'
 import CompletarPerfilBabaView from '@/views/CompletarPerfilBabaView.vue'
@@ -11,9 +13,7 @@ import CompletarPerfilResponsavelView from '@/views/CompletarPerfilResponsavelVi
 import CalendarioView from '@/views/CalendarioView.vue'
 import AgendamentosBabaView from '@/views/AgendamentosBabaView.vue'
 import AgendamentoView from '@/views/AgendamentoView.vue'
-import BabasDetalhesView from '@/views/BabasDetalhesView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
-import LoginView from '@/views/LoginView.vue'
 
 
 const routes = [
@@ -21,6 +21,12 @@ const routes = [
     path: '/',
     name: 'welcome',
     component: WelcomeView,
+  },
+
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView,
   },
 
   {
@@ -39,6 +45,12 @@ const routes = [
     path: '/buscar-babas',
     name: 'buscarBabas',
     component: BrowserBabaView,
+  },
+
+  {
+    path: '/detalhes-baba/:id',
+    name: 'detalhesBaba',
+    component: BabasDetalhesView,
   },
 
   {
@@ -83,22 +95,12 @@ const routes = [
     component: AgendamentoView,
   },
 
-  {
-    path: '/detalhes-baba',
-    name: 'detalhesBaba',
-    component: BabasDetalhesView,
-  },
-
+  // sempre por último
   {
     path: '/:pathMatch(.*)*',
     name: 'notfound',
     component: NotFoundView,
   },
-  
-  {
-  path: '/login',
-  component: LoginView
-}
 ]
 
 const router = createRouter({
