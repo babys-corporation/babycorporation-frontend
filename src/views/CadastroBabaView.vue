@@ -77,7 +77,7 @@ const cadastrar = async () => {
     </div>
 
     <div v-if="sucesso" class="card sucesso">
-      ✅ Cadastro realizado! Redirecionando...
+      Cadastro realizado! Redirecionando...
     </div>
 
     <div v-if="erro" class="card erro">
@@ -123,7 +123,7 @@ const cadastrar = async () => {
 <style scoped>
 .pagina {
   min-height: 100vh;
-  background: linear-gradient(135deg, #ff2f92, #8b5cf6);
+  background: var(--degrade-suave);
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
@@ -132,7 +132,7 @@ const cadastrar = async () => {
 
 .hero {
   text-align: center;
-  color: white;
+  color: var(--cor-texto);
 }
 
 .hero h1 {
@@ -159,7 +159,7 @@ const cadastrar = async () => {
   text-align: center;
   font-size: 16px;
   font-weight: bold;
-  color: #F6339A;
+  color: var(--cor-acento);
 }
 
 .icone {
@@ -168,7 +168,7 @@ const cadastrar = async () => {
 }
 
 .label-tipo {
-  color: #F6339A;
+  color: var(--cor-acento);
   font-weight: bold;
   font-size: 14px;
 }
@@ -179,14 +179,14 @@ textarea {
   padding: 12px 14px;
   border: none;
   border-radius: 8px;
-  background: #F3F4F6;
+  background: var(--cor-campo);
   font-size: 14px;
   outline: none;
   font-family: inherit;
 }
 
 select {
-  color: #8b5cf6;
+  color: var(--cor-acento);
 }
 
 textarea {
@@ -199,7 +199,7 @@ textarea {
   border: none;
   border-radius: 12px;
   background: white;
-  color: #F6339A;
+  color: var(--cor-acento);
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;

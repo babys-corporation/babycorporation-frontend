@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth'
 import { meRequest } from '@/api/auth'
 import api from '@/api/config'
 import type { Agendamento } from '@/api/agendamentoApi'
+import { User } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -32,12 +33,12 @@ const dadosPessoais = computed(() => {
   const telefone = String(u.telefone ?? '').replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, '')
 
   return [
-    { rotulo: '📧 E-mail', valor: u.email },
-    { rotulo: '📞 Telefone', valor: mascarar(telefone, /^(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3') },
-    { rotulo: '🪪 CPF', valor: mascarar(u.cpf, /^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4') },
-    { rotulo: '📮 CEP', valor: mascarar(u.cep, /^(\d{5})(\d{3})$/, '$1-$2') },
-    { rotulo: '📍 Localização', valor: [u.cidade, u.bairro].filter(Boolean).join(', ') },
-    { rotulo: '👶 Filhos', valor: String(perfilPai.value?.numero_filhos ?? 0) },
+    { rotulo: 'E-mail', valor: u.email },
+    { rotulo: 'Telefone', valor: mascarar(telefone, /^(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3') },
+    { rotulo: 'CPF', valor: mascarar(u.cpf, /^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4') },
+    { rotulo: 'CEP', valor: mascarar(u.cep, /^(\d{5})(\d{3})$/, '$1-$2') },
+    { rotulo: 'Localização', valor: [u.cidade, u.bairro].filter(Boolean).join(', ') },
+    { rotulo: 'Filhos', valor: String(perfilPai.value?.numero_filhos ?? 0) },
   ].map((item) => ({ ...item, valor: item.valor || 'Não informado' }))
 })
 
@@ -175,7 +176,7 @@ onMounted(async () => {
         <!-- Perfil: foto, nome e dados pessoais (visíveis só para o próprio usuário) -->
         <section class="card perfil">
           <img v-if="fotoUrl" :src="fotoUrl" :alt="nomeExibido" class="foto" />
-          <div v-else class="foto foto-vazia">👤</div>
+          <div v-else class="foto foto-vazia"><User :size="52" aria-hidden="true" /></div>
 
           <h1>{{ nomeExibido }}</h1>
 
@@ -200,7 +201,7 @@ onMounted(async () => {
               <strong>{{ a.nome_baba }}</strong>
               <span class="ag-valor">{{ moeda(a.preco) }}</span>
             </div>
-            <p>📅 {{ formatarData(a.data) }} · 🕐 {{ hora(a.hora_inicio) }} às {{ hora(a.hora_fim) }}</p>
+            <p>{{ formatarData(a.data) }} · {{ hora(a.hora_inicio) }} às {{ hora(a.hora_fim) }}</p>
             <p class="ag-status">Aguardando a babá aceitar · {{ textoPagamento(a) }}</p>
             <button
               v-if="a.pix_brcode && a.status_pagamento === 'AGUARDANDO'"
@@ -225,7 +226,7 @@ onMounted(async () => {
               <strong>{{ a.nome_baba }}</strong>
               <span class="ag-valor">{{ moeda(a.preco) }}</span>
             </div>
-            <p>📅 {{ formatarData(a.data) }} · 🕐 {{ hora(a.hora_inicio) }} às {{ hora(a.hora_fim) }}</p>
+            <p>{{ formatarData(a.data) }} · {{ hora(a.hora_inicio) }} às {{ hora(a.hora_fim) }}</p>
             <p class="ag-status">{{ textoPagamento(a) }}</p>
           </div>
         </section>
@@ -245,7 +246,7 @@ onMounted(async () => {
 <style scoped>
 .pagina {
   padding: 16px;
-  background: #F9FAFB;
+  background: var(--cor-fundo);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -260,17 +261,17 @@ onMounted(async () => {
   background: white;
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(70, 52, 60, 0.05);
 }
 
 .info-usuario h2 {
   font-size: 20px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--cor-texto);
 }
 
 .info-usuario p {
-  color: #6b7280;
+  color: var(--cor-texto-suave);
   font-size: 14px;
 }
 
@@ -278,13 +279,13 @@ onMounted(async () => {
   background: white;
   border-radius: 14px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, .06);
 }
 
 .card h2 {
   font-size: 17px;
   margin: 0 0 12px;
-  color: #1f2937;
+  color: var(--cor-texto);
 }
 
 .perfil {
@@ -298,7 +299,7 @@ onMounted(async () => {
 .perfil h1 {
   font-size: 24px;
   margin: 0;
-  color: #1f2937;
+  color: var(--cor-texto);
 }
 
 .foto {
@@ -313,7 +314,8 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   font-size: 44px;
-  background: #F3F4F6;
+  background: var(--cor-campo);
+  color: var(--cor-primaria);
 }
 
 .grade {
@@ -326,32 +328,32 @@ onMounted(async () => {
 }
 
 .item {
-  background: #f9f9f9;
+  background: var(--cor-campo);
   border-radius: 10px;
   padding: 10px 12px;
   display: flex;
   flex-direction: column;
   gap: 2px;
   font-size: 14px;
-  color: #333;
+  color: var(--cor-texto);
   overflow-wrap: anywhere;
 }
 
 .rotulo {
   font-size: 12px;
   font-weight: bold;
-  color: #F6339A;
+  color: var(--cor-acento);
 }
 
 .vazio {
-  color: #6b7280;
+  color: var(--cor-texto-suave);
   font-size: 14px;
   text-align: center;
   padding: 12px 0;
 }
 
 .agendamento {
-  border: 1px solid #F3F4F6;
+  border: 1px solid var(--cor-borda);
   border-left: 4px solid #F59E0B;
   border-radius: 10px;
   padding: 12px 14px;
@@ -360,7 +362,7 @@ onMounted(async () => {
   flex-direction: column;
   gap: 4px;
   font-size: 14px;
-  color: #374151;
+  color: var(--cor-texto);
 }
 
 .agendamento.marcado {
@@ -374,19 +376,19 @@ onMounted(async () => {
 }
 
 .ag-valor {
-  color: #F6339A;
+  color: var(--cor-acento);
   font-weight: bold;
 }
 
 .ag-status {
-  color: #6b7280;
+  color: var(--cor-texto-suave);
   font-size: 13px;
 }
 
 .btn-pix {
   align-self: flex-start;
   margin-top: 6px;
-  background: #F6339A;
+  background: var(--cor-acento);
   color: white;
   border: none;
   border-radius: 10px;
@@ -403,22 +405,22 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(70, 52, 60, 0.05);
 }
 
 .incompleto h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--cor-texto);
 }
 
 .incompleto p {
-  color: #6b7280;
+  color: var(--cor-texto-suave);
   font-size: 14px;
 }
 
 .btn-completar {
-  background: linear-gradient(135deg, #ff2f92, #8b5cf6);
+  background: var(--degrade);
   color: white;
   border: none;
   border-radius: 12px;

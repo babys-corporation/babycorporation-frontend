@@ -81,7 +81,7 @@ const limparFiltros = () => {
 .topo-busca {
   padding: 40px 20px;
   background-color: #ffffff;
-  border-bottom: solid #E5E5E5;
+  border-bottom: solid var(--cor-borda);
 }
 .topo-busca h1 { font-size: 32px; }
 
@@ -108,12 +108,12 @@ const limparFiltros = () => {
 .campo-filtro label { font-weight: bold; font-size: 14px; }
 
 .busca-input-wrapper { position: relative; }
-.icone-busca { position: absolute; left: 10px; top: 14px; color: #888; }
+.icone-busca { position: absolute; left: 10px; top: 14px; color: var(--cor-texto-suave); }
 .campo-filtro input[type="text"], select {
   width: 100%;
   padding: 10px 10px 10px 35px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--cor-borda);
 }
 select { padding-left: 10px; }
 

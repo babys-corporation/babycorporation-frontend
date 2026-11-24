@@ -24,7 +24,7 @@ defineProps({
   background: white;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, 0.06);
 }
 
 .secao h3 {
@@ -51,7 +51,7 @@ defineProps({
 }
 
 .inativo {
-  background: #F3F4F6;
-  color: #9CA3AF;
+  background: var(--cor-campo);
+  color: var(--cor-texto-suave);
 }
 </style>

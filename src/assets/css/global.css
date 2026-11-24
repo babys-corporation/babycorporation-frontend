@@ -4,21 +4,54 @@
   --rosa-fundo:   #F9EEF2;
   --rosa-medio:   #D7B7C3;
   --malva:        #9B7D8A;
+  --malva-escura: #79606B;  /* malva com contraste para texto e botões */
   --marrom:       #46343C;
 
   /* Papéis (use estes nos componentes, não as cores cruas) */
-  --cor-fundo:        var(--rosa-fundo);
-  --cor-superficie:   #ffffff;
-  --cor-primaria:     var(--malva);   /* ícones, detalhes, links */
-  --cor-destaque:     var(--marrom);  /* botões principais, footer */
-  --cor-secundaria:   var(--rosa-medio);
-  --cor-suave:        var(--rosa-claro);
-  --cor-texto:        var(--marrom);
-  --cor-texto-suave:  var(--malva);
-  --cor-sucesso:      #22c55e;        /* selo "Verificado" */
+  --cor-fundo:            var(--rosa-fundo);
+  --cor-superficie:       #ffffff;
+  --cor-superficie-suave: var(--rosa-fundo);
+  --cor-primaria:         var(--malva);         /* ícones, detalhes */
+  --cor-acento:           var(--malva-escura);  /* links, preços, botões */
+  --cor-destaque:         var(--marrom);        /* footer, selos */
+  --cor-secundaria:       var(--rosa-medio);
+  --cor-suave:            var(--rosa-claro);
+  --cor-texto:            var(--marrom);
+  --cor-texto-suave:      var(--malva-escura);
+  --cor-borda:            #EADCE2;
+  --cor-campo:            var(--rosa-fundo);
+  --cor-sucesso:          #22c55e;
+
+  /* Degradês */
+  --degrade:        linear-gradient(135deg, var(--malva-escura), var(--marrom)); /* texto branco */
+  --degrade-suave:  linear-gradient(135deg, var(--rosa-claro), var(--rosa-medio) 60%, #C9A7B5); /* texto marrom */
+  --degrade-fundo:  linear-gradient(180deg, var(--rosa-claro), var(--rosa-fundo));
+
+  /* Ícones de "Por que escolher" */
+  --icone-escudo:        #F6339A;
+  --icone-escudo-fundo:  #FCE7F3;
+  --icone-estrela:       #AD46FF;
+  --icone-estrela-fundo: #F3E8FF;
+  --icone-relogio:       #3E8AFF;
+  --icone-relogio-fundo: #DBEAFE;
+
+  --fonte-display: 'Fredoka', sans-serif;
+  --fonte-texto: 'Plus Jakarta Sans', sans-serif;
 
   --raio: 12px;
+  --raio-md: 20px;
+  --raio-lg: 32px;
+  --raio-full: 999px;
+
+  --anel: rgba(70, 52, 60, 0.18);
+  --borda-suave: rgba(70, 52, 60, 0.08);
   --sombra: 0 4px 12px rgba(70, 52, 60, 0.12);
+  --sombra-suave: 0 4px 14px rgba(70, 52, 60, 0.07);
+  --sombra-card: 0 10px 30px rgba(70, 52, 60, 0.10);
+  --sombra-card-hover: 0 20px 44px rgba(70, 52, 60, 0.22);
+
+  --duracao: 0.28s;
+  --easing: cubic-bezier(0.22, 1, 0.36, 1);
   --largura-max: 1200px;
 }
 
@@ -29,4 +62,5 @@ body {
   background: var(--cor-fundo);
   color: var(--cor-texto);
   font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }

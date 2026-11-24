@@ -65,7 +65,7 @@ const navegarParaCadastrobaba =  () =>{
     
         <div class="icones">
             <div class="icone-escudo">
-                <Shield :size="35" color="#F6339A" stroke-width="1.5" />
+                <Shield :size="35" color="var(--icone-escudo)" stroke-width="1.5" />
             </div>
             <h2>100% Verificadas</h2>
             <p>Todas as babás passam por verificação de documentos e checagem de referências.</p>
@@ -73,7 +73,7 @@ const navegarParaCadastrobaba =  () =>{
 
         <div>
             <div class="icone-estrela">
-                <Star :size="35" color="#AD46FF" stroke-width="1.5" />
+                <Star :size="35" color="var(--icone-estrela)" stroke-width="1.5" />
             </div>
             <h2>Avaliações Reais</h2>
             <p>Leia avaliações de outras famílias e escolha com confiança.</p>
@@ -81,7 +81,7 @@ const navegarParaCadastrobaba =  () =>{
 
         <div>
             <div class="icone-relogio">
-                <Clock :size="35" color="#3E8AFF" stroke-width="1.5" />
+                <Clock :size="35" color="var(--icone-relogio)" stroke-width="1.5" />
             </div>
             <h2>Disponibilidade Flexível</h2>
             <p>Encontre babás disponíveis para horários que funcionam para você.</p>
@@ -96,7 +96,7 @@ const navegarParaCadastrobaba =  () =>{
 
         <div class="seta-rosa" @click="navegarParaBusca">
             <p class="ver-todas">Ver todas</p>
-            <ArrowRight color="#F6339A" :size="20" />
+            <ArrowRight color="var(--cor-primaria)" :size="20" />
         </div>
     </section>
 
@@ -149,58 +149,13 @@ const navegarParaCadastrobaba =  () =>{
 
 <style>
 /*====================================================
-    TOKENS — fontes, cores, raios, sombras
+    Fontes e títulos (as variáveis ficam no global.css)
 ====================================================*/
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-:root {
-    --fonte-display: 'Fredoka', sans-serif;
-    --fonte-texto: 'Plus Jakarta Sans', sans-serif;
-
-    --cor-fundo: #FFF9F5;
-    --cor-superficie: #FFFFFF;
-    --cor-superficie-suave: #FDF0F6;
-
-    --cor-tinta: #2A2140;
-    --cor-tinta-suave: #746C87;
-
-    --rosa: #EC3F93;
-    --rosa-claro: #FF6FB0;
-    --rosa-escuro: #C6247A;
-    --violeta: #7C4DFF;
-    --dourado: #FFB258;
-    --azul: #3E8AFF;
-
-    --anel-rosa: rgba(236, 63, 147, 0.18);
-    --borda-suave: rgba(42, 33, 64, 0.06);
-
-    --raio-sm: 14px;
-    --raio-md: 20px;
-    --raio-lg: 32px;
-    --raio-full: 999px;
-
-    --sombra-card: 0 10px 30px rgba(42, 33, 64, 0.07);
-    --sombra-card-hover: 0 20px 44px rgba(236, 63, 147, 0.22);
-    --sombra-suave: 0 4px 14px rgba(42, 33, 64, 0.05);
-
-    --duracao: 0.28s;
-    --easing: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    background: var(--cor-fundo);
-    color: var(--cor-tinta);
-    font-family: var(--fonte-texto);
-    -webkit-font-smoothing: antialiased;
-}
-
 h1, h2, h3 {
     font-family: var(--fonte-display);
-    color: var(--cor-tinta);
+    color: var(--cor-texto);
     line-height: 1.2;
     letter-spacing: -0.01em;
 }
@@ -218,7 +173,7 @@ button {
     margin: 0 auto;
     border: none;
     border-radius: var(--raio-full);
-    background: linear-gradient(135deg, var(--rosa-claro), var(--rosa-escuro));
+    background: var(--degrade);
     background-size: 160% 160%;
     background-position: 0% 50%;
     color: #FFFFFF;
@@ -227,7 +182,7 @@ button {
     font-size: 15px;
     letter-spacing: 0.2px;
     cursor: pointer;
-    box-shadow: 0 12px 26px var(--anel-rosa);
+    box-shadow: 0 12px 26px var(--anel);
     transition: transform var(--duracao) var(--easing),
                 box-shadow var(--duracao) var(--easing),
                 background-position var(--duracao) var(--easing);
@@ -235,7 +190,7 @@ button {
 
 button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 18px 36px var(--anel-rosa);
+    box-shadow: 0 18px 36px var(--anel);
     background-position: 100% 50%;
 }
 
@@ -244,20 +199,20 @@ button:active {
 }
 
 button:focus-visible {
-    outline: 3px solid rgba(236, 63, 147, 0.35);
+    outline: 3px solid rgba(70, 52, 60, 0.35);
     outline-offset: 3px;
 }
 
 .inverso {
     background: transparent;
-    color: var(--rosa);
-    border: 2px solid var(--rosa);
+    color: var(--cor-acento);
+    border: 2px solid var(--cor-acento);
     box-shadow: none;
 }
 
 .inverso:hover {
     background: var(--cor-superficie-suave);
-    box-shadow: 0 8px 20px rgba(236, 63, 147, 0.12);
+    box-shadow: 0 8px 20px rgba(70, 52, 60, 0.12);
 }
 
 /*====================================================
@@ -267,7 +222,7 @@ button:focus-visible {
     position: relative;
     overflow: hidden;
     text-align: center;
-    background: linear-gradient(180deg, #FFF0F7 0%, #FDF6FB 60%, var(--cor-fundo) 100%);
+    background: var(--degrade-fundo);
     padding: 100px 24px 76px;
     isolation: isolate;
 }
@@ -285,7 +240,7 @@ button:focus-visible {
 .encontreababa::before {
     width: 340px;
     height: 340px;
-    background: radial-gradient(circle, rgba(124, 77, 255, 0.18), transparent 70%);
+    background: radial-gradient(circle, rgba(155, 125, 138, 0.35), transparent 70%);
     top: -120px;
     left: -90px;
 }
@@ -293,7 +248,7 @@ button:focus-visible {
 .encontreababa::after {
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(255, 178, 88, 0.2), transparent 70%);
+    background: radial-gradient(circle, rgba(215, 183, 195, 0.6), transparent 70%);
     bottom: -170px;
     right: -110px;
     animation-delay: -4s;
@@ -315,7 +270,7 @@ button:focus-visible {
 .encontreababa p {
     max-width: 480px;
     margin: 0 auto;
-    color: var(--cor-tinta-suave);
+    color: var(--cor-texto);
     font-size: 16.5px;
     line-height: 1.65;
 }
@@ -325,7 +280,7 @@ button:focus-visible {
     width: 100%;
     height: auto;
     margin: 44px auto 12px;
-    filter: drop-shadow(0 22px 32px rgba(124, 77, 255, 0.2));
+    filter: drop-shadow(0 22px 32px rgba(155, 125, 138, 0.2));
     animation: flutuar 6s ease-in-out infinite;
 }
 
@@ -353,7 +308,7 @@ button:focus-visible {
 
 .porqueescolher > p {
     grid-column: 1 / -1;
-    color: var(--cor-tinta-suave);
+    color: var(--cor-texto-suave);
     margin: -8px auto 22px;
 }
 
@@ -375,7 +330,7 @@ button:focus-visible {
 }
 
 .porqueescolher > div p {
-    color: var(--cor-tinta-suave);
+    color: var(--cor-texto-suave);
     font-size: 14.5px;
     line-height: 1.65;
     width: auto;
@@ -407,15 +362,15 @@ button:focus-visible {
 }
 
 .icone-escudo {
-    background: linear-gradient(135deg, #FCE7F3, #FBD3E8);
+    background: var(--icone-escudo-fundo);
 }
 
 .icone-estrela {
-    background: linear-gradient(135deg, #F1E5FF, #E3CFFF);
+    background: var(--icone-estrela-fundo);
 }
 
 .icone-relogio {
-    background: linear-gradient(135deg, #DCEBFF, #C7DEFF);
+    background: var(--icone-relogio-fundo);
 }
 
 /*====================================================
@@ -432,7 +387,7 @@ button:focus-visible {
 }
 
 .babasdestaque > p {
-    color: var(--cor-tinta-suave);
+    color: var(--cor-texto);
     margin: 0 0 38px;
 }
 
@@ -450,7 +405,7 @@ div.seta-rosa {
 
 .ver-todas {
     margin: 0;
-    color: var(--rosa);
+    color: var(--cor-texto);
     font-weight: 600;
     transition: gap var(--duracao) ease;
 }
@@ -467,7 +422,7 @@ div.seta-rosa {
     Como funciona
 ====================================================*/
 .comofunciona {
-    background: linear-gradient(180deg, var(--cor-fundo), #F6EEFB);
+    background: var(--cor-fundo);
     padding: 96px 24px;
     text-align: center;
 }
@@ -478,7 +433,7 @@ div.seta-rosa {
 }
 
 .subtitulo {
-    color: var(--cor-tinta-suave);
+    color: var(--cor-texto-suave);
     margin-bottom: 60px;
 }
 
@@ -495,7 +450,7 @@ div.seta-rosa {
     top: 14px;
     bottom: 14px;
     width: 2px;
-    background-image: linear-gradient(var(--anel-rosa) 60%, transparent 0%);
+    background-image: linear-gradient(var(--anel) 60%, transparent 0%);
     background-size: 2px 12px;
     background-repeat: repeat-y;
 }
@@ -517,7 +472,7 @@ div.seta-rosa {
     flex-shrink: 0;
     width: 44px;
     height: 44px;
-    background: linear-gradient(135deg, var(--rosa), var(--violeta));
+    background: var(--degrade);
     color: white;
     font-family: var(--fonte-display);
     font-weight: 600;
@@ -526,7 +481,7 @@ div.seta-rosa {
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    box-shadow: 0 8px 18px var(--anel-rosa);
+    box-shadow: 0 8px 18px var(--anel);
     margin: 0;
     position: relative;
     z-index: 1;
@@ -554,7 +509,7 @@ div.seta-rosa {
 }
 
 .texto p {
-    color: var(--cor-tinta-suave);
+    color: var(--cor-texto-suave);
     font-size: 14px;
     margin: 0;
     line-height: 1.65;
@@ -566,8 +521,8 @@ div.seta-rosa {
 .prontacomecar {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--rosa) 0%, var(--violeta) 100%);
-    color: white;
+    background: var(--degrade-suave);
+    color: var(--cor-texto);
     text-align: center;
     padding: 96px 24px;
     isolation: isolate;
@@ -591,14 +546,14 @@ div.seta-rosa {
     width: 340px;
     height: 340px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 178, 88, 0.2), transparent 70%);
+    background: radial-gradient(circle, rgba(215, 183, 195, 0.6), transparent 70%);
     bottom: -170px;
     left: -110px;
     z-index: -1;
 }
 
 .prontacomecar h1 {
-    color: white;
+    color: var(--cor-texto);
     font-size: clamp(28px, 4vw, 41px);
     margin-bottom: 12px;
 }
@@ -612,21 +567,21 @@ div.seta-rosa {
 .prontacomecar button {
     background: #FFFFFF;
     background-image: none;
-    color: var(--rosa);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    color: var(--cor-acento);
+    box-shadow: 0 12px 28px rgba(70, 52, 60, 0.18);
     display: inline-flex;
     margin: 0 8px 12px;
 }
 
 .prontacomecar button:hover {
-    background: #FFF5FA;
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
+    background: var(--cor-fundo);
+    box-shadow: 0 16px 34px rgba(70, 52, 60, 0.22);
 }
 
 .prontacomecar .inverso {
     background: transparent;
-    color: #FFFFFF;
-    border: 2px solid rgba(255, 255, 255, 0.7);
+    color: var(--cor-texto);
+    border: 2px solid var(--cor-destaque);
     box-shadow: none;
 }
 
@@ -655,7 +610,7 @@ button {
 
 /* ── Hero ───────────────────────────────────────── */
 .encontreababa {
-    background: #FFF5FA;
+    background: var(--degrade-fundo);
     padding: 72px 20px 64px;
 }
 
@@ -737,12 +692,12 @@ button {
 .porqueescolher > div {
     border-radius: 20px;
     padding: 32px 24px;
-    box-shadow: 0 4px 18px rgba(42, 33, 64, .05);
+    box-shadow: 0 4px 18px rgba(70, 52, 60, .05);
 }
 
 .porqueescolher > div:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(236, 63, 147, .14);
+    box-shadow: 0 12px 28px rgba(70, 52, 60, .14);
 }
 
 .porqueescolher h2 {
@@ -758,14 +713,14 @@ button {
     margin-bottom: 18px;
 }
 
-.icone-escudo { background: #FCE7F3; }
-.icone-estrela { background: #F1E5FF; }
-.icone-relogio { background: #DCEBFF; }
+.icone-escudo { background: var(--icone-escudo-fundo); }
+.icone-estrela { background: var(--icone-estrela-fundo); }
+.icone-relogio { background: var(--icone-relogio-fundo); }
 
 /* ── Babás em destaque ──────────────────────────── */
 .babasdestaque {
     padding: 72px 20px 80px;
-    background: #FFF5FA;
+    background: var(--cor-suave);
 }
 
 .babasdestaque > p {
@@ -783,7 +738,7 @@ button {
 }
 
 .comofunciona .numero {
-    background: var(--rosa);
+    background: var(--cor-acento);
 }
 
 .comofunciona .texto {
@@ -794,11 +749,11 @@ button {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--cor-tinta);
+    color: var(--cor-texto);
 }
 
 .comofunciona .texto h3 svg {
-    color: var(--rosa);
+    color: var(--cor-acento);
     flex-shrink: 0;
 }
 
@@ -818,7 +773,7 @@ button {
         bottom: auto;
         width: auto;
         height: 2px;
-        background-image: linear-gradient(90deg, var(--anel-rosa) 60%, transparent 0%);
+        background-image: linear-gradient(90deg, var(--anel) 60%, transparent 0%);
         background-size: 12px 2px;
         background-repeat: repeat-x;
     }

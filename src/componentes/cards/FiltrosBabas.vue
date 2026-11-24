@@ -137,15 +137,15 @@ function limpar() {
 
 <style scoped>
 .filtros {
-  --rosa: #F6339A;
-  --borda: #e5e7eb;
-  --campo: #f9fafb;
+  --rosa: var(--cor-acento);
+  --borda: var(--cor-borda);
+  --campo: var(--cor-campo);
 
   background: #fff;
   padding: 20px;
-  border: 1px solid #f1f1f4;
+  border: 1px solid var(--cor-borda);
   border-radius: 16px;
-  box-shadow: 0 4px 18px rgba(17, 24, 39, .05);
+  box-shadow: 0 4px 18px rgba(70, 52, 60, .05);
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -157,14 +157,14 @@ function limpar() {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f1f1f4;
+  border-bottom: 1px solid var(--cor-borda);
 }
 
 .filtros h3 {
   font-size: 17px;
   font-weight: bold;
   margin: 0;
-  color: #1f2937;
+  color: var(--cor-texto);
 }
 
 /* anula o estilo global de button (fit-content, margin auto, sombra) */
@@ -189,7 +189,7 @@ function limpar() {
 }
 
 .btn-limpar:hover {
-  background: #FDF2F8;
+  background: var(--cor-fundo);
 }
 
 .grupo {
@@ -201,7 +201,7 @@ function limpar() {
 .grupo label {
   font-size: 14px;
   font-weight: 600;
-  color: #374151;
+  color: var(--cor-texto);
 }
 
 /* campos */
@@ -249,12 +249,12 @@ function limpar() {
 .linha input:focus {
   border-color: var(--rosa);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(246, 51, 154, .12);
+  box-shadow: 0 0 0 3px rgba(70, 52, 60, .12);
 }
 
 .ate {
   font-size: 13px;
-  color: #9ca3af;
+  color: var(--cor-texto-suave);
   white-space: nowrap;
 }
 
@@ -269,7 +269,7 @@ function limpar() {
 }
 
 .icone-busca {
-  color: #9ca3af;
+  color: var(--cor-texto-suave);
   flex-shrink: 0;
 }
 
@@ -287,7 +287,7 @@ function limpar() {
 
 .setas-label {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--cor-texto-suave);
   margin-right: 2px;
 }
 
@@ -301,7 +301,7 @@ function limpar() {
   border: 1px solid var(--borda);
   border-radius: 8px;
   background: #fff;
-  color: #6b7280;
+  color: var(--cor-texto-suave);
   font-size: 15px;
   cursor: pointer;
   transition: border-color .15s, color .15s, background .15s;
@@ -319,7 +319,7 @@ function limpar() {
 
 .seta:focus-visible,
 .btn-limpar:focus-visible {
-  outline: 3px solid rgba(246, 51, 154, .3);
+  outline: 3px solid rgba(70, 52, 60, .3);
   outline-offset: 2px;
 }
 

@@ -15,11 +15,11 @@ defineProps({
     <img :src="foto" :alt="nome" class="foto" />
     <h2>{{ nome }}</h2>
     <div class="info-linha">
-      <span>📍 {{ cidade }}</span>
-      <span>🕐 {{ experiencia }}</span>
+      <span>{{ cidade }}</span>
+      <span>{{ experiencia }}</span>
     </div>
     <div class="avaliacao">
-      ⭐ {{ avaliacao }} ({{ avaliacoes }} avaliações)
+      {{ avaliacao }} ({{ avaliacoes }} avaliações)
     </div>
     <div class="preco">R$ {{ preco }}/hora</div>
   </div>
@@ -31,7 +31,7 @@ defineProps({
   border-radius: 12px;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, 0.06);
 }
 
 .foto {
@@ -52,19 +52,19 @@ h2 {
   justify-content: center;
   gap: 16px;
   font-size: 13px;
-  color: #666;
+  color: var(--cor-texto-suave);
   margin: 8px 0;
 }
 
 .avaliacao {
   font-size: 14px;
-  color: #555;
+  color: var(--cor-texto-suave);
 }
 
 .preco {
   font-size: 22px;
   font-weight: bold;
-  color: #F6339A;
+  color: var(--cor-acento);
   margin-top: 8px;
 }
 </style>

@@ -14,7 +14,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
         <h3>Juliana Santos</h3>
 
         <div class="linha">
-          <MapPin :size="16" color="#F6339A" />
+          <MapPin :size="16" color="var(--cor-primaria)" />
           <span>Belo Horizonte, MG</span>
         </div>
 
@@ -24,7 +24,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
         </p>
 
         <div class="linha">
-          <Clock :size="16" color="#F6339A" />
+          <Clock :size="16" color="var(--cor-primaria)" />
           <span>3 anos de experiência</span>
         </div>
 
@@ -45,7 +45,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
         <h3>Ana Paula Costa</h3>
 
         <div class="linha">
-          <MapPin :size="16" color="#F6339A" />
+          <MapPin :size="16" color="var(--cor-primaria)" />
           <span>Rio de Janeiro, RJ</span>
         </div>
 
@@ -55,7 +55,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
         </p>
 
         <div class="linha">
-          <Clock :size="16" color="#F6339A" />
+          <Clock :size="16" color="var(--cor-primaria)" />
           <span>Experiência comprovada</span>
         </div>
 
@@ -76,7 +76,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
         <h3>Maria Silva</h3>
 
         <div class="linha">
-          <MapPin :size="16" color="#F6339A" />
+          <MapPin :size="16" color="var(--cor-primaria)" />
           <span>São Paulo, SP</span>
         </div>
 
@@ -86,7 +86,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
         </p>
 
         <div class="linha">
-          <Clock :size="16" color="#F6339A" />
+          <Clock :size="16" color="var(--cor-primaria)" />
           <span>5 anos de experiência</span>
         </div>
 
@@ -112,7 +112,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
   background: white;
   border-radius: 12px;
   width: 250px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(70, 52, 60, 0.1);
   overflow: hidden;
   text-align: left;
 }
@@ -134,7 +134,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #22c55e;
+  background: var(--cor-destaque);
   color: white;
   font-size: 12px;
   padding: 5px 8px;
@@ -151,7 +151,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
   gap: 6px;
   margin: 6px 0;
   font-size: 14px;
-  color: #555;
+  color: var(--cor-texto-suave);
 }
 
 .linha img {
@@ -160,7 +160,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
 
 .info p {
   font-size: 14px;
-  color: #666;
+  color: var(--cor-texto-suave);
 }
 
 .tags {
@@ -170,7 +170,7 @@ import { BadgeCheck, MapPin, Clock } from 'lucide-vue-next';
 }
 
 .tags span {
-  background: #e5e7eb;
+  background: var(--cor-suave);
   padding: 5px 8px;
   border-radius: 6px;
   font-size: 12px;

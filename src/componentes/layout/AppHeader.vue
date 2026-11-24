@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Menu, X, Baby } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
+import { meRequest } from '@/api/auth';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -26,6 +27,28 @@ const navegarPara = (rota: string) => {
   fecharMenu();
 };
 
+// "Início": quem está logado vai para a própria home; visitante, para a Welcome
+const irParaInicio = async () => {
+  if (!estaAutenticado.value) {
+    navegarPara('/');
+    return;
+  }
+
+  // ao recarregar a página o token continua salvo, mas o usuário não
+  if (!usuario.value) {
+    try {
+      const { data } = await meRequest();
+      authStore.setUsuario(data);
+    } catch (e) {
+      console.error('Erro ao buscar usuário:', e);
+      navegarPara('/login');
+      return;
+    }
+  }
+
+  navegarPara(usuario.value?.tipo?.toUpperCase() === 'BABA' ? '/home-baba' : '/home-familia');
+};
+
 const sair = () => {
   authStore.logout();
   fecharMenu();
@@ -38,23 +61,23 @@ const sair = () => {
     <div class="navbar-container">
       <!-- Logo -->
       <div class="logo" @click="navegarPara('/')">
-         <Baby :size="35" color="#F6339A" stroke-width="1.5" />
-        <span>BabysCorporation</span>
+        <span class="logo-icone"><Baby :size="26" stroke-width="1.75" aria-hidden="true" /></span>
+        <span>BabyCare</span>
       </div>
 
       <!-- Menu desktop -->
       <nav class="menu-desktop">
         <template v-if="estaAutenticado && ehBaba">
-          <a @click="navegarPara('/home-baba')">Home</a>
-          <a @click="navegarPara('/agendamentos-baba')">Agendamentos</a>
+          <a :class="{ ativo: $route.path === '/home-baba' }" @click="navegarPara('/home-baba')">Home</a>
+          <a :class="{ ativo: $route.path === '/agendamentos-baba' }" @click="navegarPara('/agendamentos-baba')">Agendamentos</a>
         </template>
         <template v-else-if="estaAutenticado && ehPai">
-          <a @click="navegarPara('/home-familia')">Home</a>
-          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+          <a :class="{ ativo: $route.path === '/home-familia' }" @click="navegarPara('/home-familia')">Home</a>
+          <a :class="{ ativo: $route.path === '/buscar-babas' }" @click="navegarPara('/buscar-babas')">Buscar Babás</a>
         </template>
         <template v-else>
-          <a @click="navegarPara('/')">Início</a>
-          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+          <a :class="{ ativo: $route.path === '/' }" @click="irParaInicio">Início</a>
+          <a :class="{ ativo: $route.path === '/buscar-babas' }" @click="navegarPara('/buscar-babas')">Buscar Babás</a>
         </template>
       </nav>
 
@@ -70,8 +93,8 @@ const sair = () => {
 
       <!-- Botão hamburguer (mobile) -->
       <button class="btn-hamburguer" @click="toggleMenu" :aria-expanded="menuAberto" aria-label="Abrir menu">
-        <Menu v-if="!menuAberto" :size="28" color="#F6339A" />
-        <X v-else :size="28" color="#F6339A" />
+        <Menu v-if="!menuAberto" :size="24" />
+        <X v-else :size="24" />
       </button>
     </div>
 
@@ -79,16 +102,16 @@ const sair = () => {
     <transition name="slide">
       <nav v-if="menuAberto" class="menu-mobile">
         <template v-if="estaAutenticado && ehBaba">
-          <a @click="navegarPara('/home-baba')">Home</a>
-          <a @click="navegarPara('/agendamentos-baba')">Agendamentos</a>
+          <a :class="{ ativo: $route.path === '/home-baba' }" @click="navegarPara('/home-baba')">Home</a>
+          <a :class="{ ativo: $route.path === '/agendamentos-baba' }" @click="navegarPara('/agendamentos-baba')">Agendamentos</a>
         </template>
         <template v-else-if="estaAutenticado && ehPai">
-          <a @click="navegarPara('/home-familia')">Home</a>
-          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+          <a :class="{ ativo: $route.path === '/home-familia' }" @click="navegarPara('/home-familia')">Home</a>
+          <a :class="{ ativo: $route.path === '/buscar-babas' }" @click="navegarPara('/buscar-babas')">Buscar Babás</a>
         </template>
         <template v-else>
-          <a @click="navegarPara('/')">Início</a>
-          <a @click="navegarPara('/buscar-babas')">Buscar Babás</a>
+          <a :class="{ ativo: $route.path === '/' }" @click="irParaInicio">Início</a>
+          <a :class="{ ativo: $route.path === '/buscar-babas' }" @click="navegarPara('/buscar-babas')">Buscar Babás</a>
         </template>
         <hr />
         <template v-if="estaAutenticado">
@@ -111,86 +134,127 @@ const sair = () => {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: #ffffff;
-  border-bottom: 1px solid #eee;
+  background: linear-gradient(120deg, var(--rosa-fundo), var(--rosa-claro) 50%, var(--rosa-medio));
+  box-shadow: 0 4px 20px rgba(70, 52, 60, 0.14);
 }
 
 .navbar-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 15px 30px;
-  max-width: 1200px;
+  gap: 20px;
+  min-height: 70px;
+  padding: 0 30px;
+  max-width: var(--largura-max);
   margin: 0 auto;
 }
 
+/* empurra o menu e os botões para a direita */
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 20px;
-  font-weight: bold;
-  color: #F6339A;
+  gap: 10px;
+  margin-right: auto;
+  font-family: var(--fonte-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cor-texto);
   cursor: pointer;
+}
+
+.logo-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: var(--degrade);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(70, 52, 60, 0.25);
+  transition: transform var(--duracao) var(--easing);
+}
+
+.logo:hover .logo-icone {
+  transform: rotate(-6deg) scale(1.05);
 }
 
 /* Menu desktop */
 .menu-desktop {
   display: flex;
-  gap: 28px;
+  gap: 4px;
 }
 
 .menu-desktop a {
-  cursor: pointer;
-  color: #333;
+  padding: 9px 16px;
+  border-radius: var(--raio-full);
+  color: var(--cor-texto);
   font-size: 15px;
   font-weight: 500;
-  transition: color 0.2s;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .menu-desktop a:hover {
-  color: #F6339A;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.menu-desktop a.ativo {
+  background: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
 }
 
 .acoes-desktop {
   display: flex;
-  gap: 12px;
+  gap: 10px;
+  padding-left: 20px;
+  border-left: 1px solid rgba(70, 52, 60, 0.2);
 }
 
 .acoes-desktop button,
 .menu-mobile button {
   width: auto;
   height: auto;
-  padding: 10px 22px;
-  font-size: 14px;
   margin: 0;
+  padding: 9px 20px;
+  border-radius: var(--raio-full);
+  font-size: 14px;
 }
 
-/* Botão solido rosa */
+/* Botão principal */
 .btn-solido {
-  background-color: #F6339A;
+  border: 1.5px solid transparent;
   color: #fff;
-  border-radius: 8px;
+  box-shadow: 0 6px 14px rgba(70, 52, 60, 0.22);
 }
 
-/* Botão outnile cinza */
-.btn-outline {
-  background-color: #fff;
-  color: #f3d2e3;
-  border: 1.5px solid #F6339A;
-  border-radius: 8px;
+/* Botão discreto (Entrar / Sair) */
+.btn-outline,
+.btn-outline:hover {
+  background: transparent;
+  color: var(--cor-texto);
+  border: 1.5px solid rgba(70, 52, 60, 0.35);
+  box-shadow: none;
+}
+
+.btn-outline:hover {
+  background: rgba(70, 52, 60, 0.08);
+  transform: none;
 }
 
 /* Botão hamburguer escondido no desktop */
-.btn-hamburguer {
+.btn-hamburguer,
+.btn-hamburguer:hover {
   display: none;
-  background: none;
-  border: none;
-  padding: 6px;
-  width: auto;
-  height: auto;
+  width: 42px;
+  height: 42px;
   margin: 0;
-  cursor: pointer;
+  padding: 0;
+  border: none;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--cor-texto);
+  box-shadow: none;
+  transform: none;
 }
 
 /* Menu mobile escondido por padrão */
@@ -206,12 +270,17 @@ const sair = () => {
   Responsivo (mobile)
 =====================*/
 @media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 20px;
+  }
+
   .menu-desktop,
   .acoes-desktop {
     display: none;
   }
 
-  .btn-hamburguer {
+  .btn-hamburguer,
+  .btn-hamburguer:hover {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -222,44 +291,54 @@ const sair = () => {
   .menu-mobile {
     display: flex;
     flex-direction: column;
+    gap: 4px;
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
-    background: #fff;
-    padding: 20px 30px 30px 30px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    padding: 16px 20px 24px;
+    border-radius: 0 0 20px 20px;
+    background: var(--cor-fundo);
+    box-shadow: var(--sombra-card);
     z-index: 1050;
   }
 
   .menu-mobile a {
-    padding: 14px 0;
+    padding: 12px 16px;
+    border-radius: 12px;
     font-size: 16px;
-    color: #333;
+    text-align: left;
+    color: var(--cor-texto);
     cursor: pointer;
-    border-bottom: 1px solid #f2f2f2;
+  }
+
+  .menu-mobile a.ativo {
+    background: var(--cor-suave);
+    font-weight: 600;
   }
 
   .menu-mobile hr {
+    width: 100%;
     border: none;
-    border-top: 1px solid #eee;
-    margin: 12px 0;
+    border-top: 1px solid var(--cor-borda);
+    margin: 8px 0;
   }
 
   .menu-mobile button {
     width: 100%;
+    padding: 12px 20px;
   }
 
   .menu-mobile .btn-solido {
-    margin-top: 10px;
+    margin-top: 6px;
   }
 
   .overlay {
     display: block;
     position: fixed;
     inset: 0;
-    top: 60px;
-    background: rgba(0, 0, 0, 0.35);
+    top: 70px;
+    background: rgba(70, 52, 60, 0.35);
     z-index: 1000;
   }
 }
@@ -274,5 +353,11 @@ const sair = () => {
 .slide-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-icone {
+    transition: none;
+  }
 }
 </style>

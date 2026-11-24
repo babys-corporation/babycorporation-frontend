@@ -208,7 +208,9 @@ select {
   padding: 12px;
   margin-top: 10px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
   font-size: 16px;
 }
 

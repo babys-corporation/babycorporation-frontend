@@ -125,10 +125,10 @@ onMounted(carregar)
             <span class="ag-valor">{{ moeda(a.preco) }}</span>
           </div>
           <p>
-            📅 {{ formatarData(a.data) }} · 🕐 {{ hora(a.hora_inicio) }} às
-            {{ hora(a.hora_fim) }} · 👶 {{ a.qtd_criancas }} criança(s)
+            {{ formatarData(a.data) }} · {{ hora(a.hora_inicio) }} às
+            {{ hora(a.hora_fim) }} · {{ a.qtd_criancas }} criança(s)
           </p>
-          <p v-if="a.cidade">📍 {{ a.cidade }}</p>
+          <p v-if="a.cidade">{{ a.cidade }}</p>
           <p class="ag-status">{{ statusPagamentoTexto(a) }}</p>
 
           <div class="acoes">
@@ -173,10 +173,10 @@ onMounted(carregar)
             <span class="ag-valor">{{ moeda(a.preco) }}</span>
           </div>
           <p>
-            📅 {{ formatarData(a.data) }} · 🕐 {{ hora(a.hora_inicio) }} às
-            {{ hora(a.hora_fim) }} · 👶 {{ a.qtd_criancas }} criança(s)
+            {{ formatarData(a.data) }} · {{ hora(a.hora_inicio) }} às
+            {{ hora(a.hora_fim) }} · {{ a.qtd_criancas }} criança(s)
           </p>
-          <p v-if="a.cidade">📍 {{ a.cidade }}</p>
+          <p v-if="a.cidade">{{ a.cidade }}</p>
           <p class="ag-status">{{ statusPagamentoTexto(a) }}</p>
 
           <!-- Agendamentos antigos: aceitos antes do Pix ser pago -->
@@ -206,13 +206,13 @@ onMounted(carregar)
 <style scoped>
 /* ── Base ─────────────────────────────────────────── */
 .pagina {
-  --rosa: #F6339A;
-  --texto: #1f2937;
-  --texto-suave: #6b7280;
-  --borda: #f1f1f4;
+  --rosa: var(--cor-acento);
+  --texto: var(--cor-texto);
+  --texto-suave: var(--cor-texto-suave);
+  --borda: var(--cor-borda);
 
   padding: 20px 16px 40px;
-  background: #F9FAFB;
+  background: var(--cor-fundo);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -235,7 +235,7 @@ h1 {
   border: 1px solid var(--borda);
   border-radius: 18px;
   padding: 22px;
-  box-shadow: 0 4px 18px rgba(17, 24, 39, .06);
+  box-shadow: 0 4px 18px rgba(70, 52, 60, .06);
 }
 
 .card h2 {
@@ -276,14 +276,14 @@ h1 {
   gap: 6px;
   font-size: 15px;
   line-height: 1.5;
-  color: #374151;
+  color: var(--cor-texto);
   text-align: left;
   background: #fff;
   transition: box-shadow .15s, transform .15s;
 }
 
 .agendamento:hover {
-  box-shadow: 0 6px 16px rgba(17, 24, 39, .07);
+  box-shadow: 0 6px 16px rgba(70, 52, 60, .07);
   transform: translateY(-1px);
 }
 
@@ -363,7 +363,7 @@ h1 {
 }
 
 .acoes button:focus-visible {
-  outline: 3px solid rgba(246, 51, 154, .35);
+  outline: 3px solid rgba(70, 52, 60, .35);
   outline-offset: 2px;
 }
 

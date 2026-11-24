@@ -331,11 +331,11 @@ onBeforeUnmount(pararPolling);
             {{ baba.disponivel ? "Disponível" : "Indisponível" }}
           </span>
 
-          <p v-if="idadeBaba" class="linha-info">🎂 {{ idadeBaba }} anos</p>
+          <p v-if="idadeBaba" class="linha-info">{{ idadeBaba }} Anos</p>
           <p class="linha-info">
-            🕐 {{ baba.experiencia_anos ?? 0 }} ano(s) de experiência
+            {{ baba.experiencia_anos ?? 0 }} ano(s) de experiência
           </p>
-          <p class="linha-info">📍 {{ localizacaoBaba }}</p>
+          <p class="linha-info">{{ localizacaoBaba }}</p>
         </div>
       </div>
 
@@ -350,19 +350,19 @@ onBeforeUnmount(pararPolling);
         <h2>Informações</h2>
         <div class="grade">
           <div class="item">
-            <span class="rotulo">🎓 Formação</span>
+            <span class="rotulo">Formação</span>
             <span>{{ baba.formacao || "Não informada" }}</span>
           </div>
           <div class="item">
-            <span class="rotulo">🎯 Habilidades</span>
+            <span class="rotulo">Habilidades</span>
             <span>{{ baba.habilidades || "Não informadas" }}</span>
           </div>
           <div class="item">
-            <span class="rotulo">📧 E-mail</span>
+            <span class="rotulo">E-mail</span>
             <span>{{ baba.usuario?.email || "Não informado" }}</span>
           </div>
           <div class="item">
-            <span class="rotulo">📞 Telefone</span>
+            <span class="rotulo">Telefone</span>
             <span>{{ baba.usuario?.telefone || "Não informado" }}</span>
           </div>
         </div>
@@ -435,7 +435,7 @@ onBeforeUnmount(pararPolling);
                 ? "Enviando solicitação..."
                 : agendamentoId
                   ? "Solicitação enviada"
-                  : "📅 Agendar cuidado"
+                  : "Agendar cuidado"
             }}
           </button>
 
@@ -470,7 +470,7 @@ onBeforeUnmount(pararPolling);
           </div>
 
           <p class="info">
-            🔒 Ao agendar, você recebe o QR Code Pix da babá com o valor do
+            Ao agendar, você recebe o QR Code Pix da babá com o valor do
             atendimento. Ela aceita o agendamento depois de receber o Pix.
           </p>
         </div>
@@ -489,7 +489,7 @@ onBeforeUnmount(pararPolling);
 <style scoped>
 .pagina {
   padding: 16px;
-  background: #f9fafb;
+  background: var(--cor-fundo);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -502,7 +502,7 @@ onBeforeUnmount(pararPolling);
 
 .voltar {
   align-self: flex-start;
-  color: #f6339a;
+  color: var(--cor-acento);
   font-weight: bold;
   font-size: 14px;
   cursor: pointer;
@@ -512,13 +512,23 @@ onBeforeUnmount(pararPolling);
   background: white;
   border-radius: 14px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, 0.06);
 }
 
 .cabecalho {
   display: flex;
-  gap: 18px;
+  gap: 28px;
   align-items: center;
+  padding: 28px 32px;
+}
+
+.identidade {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  text-align: left;
 }
 
 .foto {
@@ -534,12 +544,13 @@ onBeforeUnmount(pararPolling);
   align-items: center;
   justify-content: center;
   font-size: 44px;
-  background: #f3f4f6;
+  background: var(--cor-campo);
 }
 
 .identidade h1 {
-  margin: 0 0 6px;
+  margin: 0;
   font-size: 24px;
+  overflow-wrap: anywhere;
 }
 
 .disponivel {
@@ -550,17 +561,17 @@ onBeforeUnmount(pararPolling);
   padding: 3px 10px;
   border-radius: 999px;
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .disponivel.indisponivel {
-  background: #9ca3af;
+  background: var(--cor-acento);
 }
 
 .linha-info {
-  margin: 3px 0;
+  margin: 0;
   font-size: 14px;
-  color: #666;
+  color: var(--cor-texto-suave);
 }
 
 .card h2 {
@@ -571,7 +582,7 @@ onBeforeUnmount(pararPolling);
 
 .card > p {
   font-size: 14px;
-  color: #555;
+  color: var(--cor-texto-suave);
   line-height: 1.6;
   margin: 0;
   text-align: center;
@@ -585,7 +596,7 @@ onBeforeUnmount(pararPolling);
 }
 
 .item {
-  background: #f9f9f9;
+  background: var(--cor-campo);
   border-radius: 10px;
   padding: 10px 12px;
   display: flex;
@@ -593,18 +604,18 @@ onBeforeUnmount(pararPolling);
   align-items: center;
   gap: 2px;
   font-size: 14px;
-  color: #333;
+  color: var(--cor-texto);
   overflow-wrap: anywhere;
 }
 
 .rotulo {
   font-size: 12px;
   font-weight: bold;
-  color: #f6339a;
+  color: var(--cor-acento);
 }
 
 .card > p.preco {
-  color: #555;
+  color: var(--cor-texto-suave);
   font-size: 15px;
   font-weight: bold;
 }
@@ -649,23 +660,23 @@ onBeforeUnmount(pararPolling);
   flex-direction: column;
   gap: 4px;
   font-size: 13px;
-  color: #555;
+  color: var(--cor-texto-suave);
   font-weight: 600;
   text-align: center;
 }
 
 .campo input {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--cor-borda);
   border-radius: 10px;
   padding: 11px 12px;
   font-size: 14px;
-  color: #111;
-  background: #f9fafb;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
 }
 
 .campo input:disabled {
-  background: #f3f4f6;
-  color: #888;
+  background: var(--cor-campo);
+  color: var(--cor-texto-suave);
 }
 
 .linha-campos {
@@ -683,16 +694,16 @@ onBeforeUnmount(pararPolling);
 
 .duracao {
   font-size: 13px;
-  color: #777;
+  color: var(--cor-texto-suave);
 }
 
 .preco-total {
   font-size: 28px;
-  color: #f6339a;
+  color: var(--cor-acento);
 }
 
 .btn-principal {
-  background: linear-gradient(90deg, #ff2f92, #8b5cf6);
+  background: var(--degrade);
   color: white;
   border: none;
   border-radius: 12px;
@@ -701,7 +712,7 @@ onBeforeUnmount(pararPolling);
   font-weight: bold;
   cursor: pointer;
   width: 100%;
-  box-shadow: 0 6px 16px rgba(246, 51, 154, 0.25);
+  box-shadow: 0 6px 16px rgba(70, 52, 60, 0.25);
 }
 
 .btn-principal:disabled {
@@ -711,12 +722,12 @@ onBeforeUnmount(pararPolling);
 
 .info {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--cor-texto-suave);
   text-align: center;
 }
 
 .status-box {
-  background: #f3f4f6;
+  background: var(--cor-campo);
   border-radius: 10px;
   padding: 12px;
   display: flex;
@@ -761,6 +772,12 @@ onBeforeUnmount(pararPolling);
 @media (max-width: 480px) {
   .cabecalho {
     flex-direction: column;
+    gap: 18px;
+    padding: 24px 20px;
+  }
+
+  .identidade {
+    align-items: center;
     text-align: center;
   }
 }

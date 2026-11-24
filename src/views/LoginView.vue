@@ -67,8 +67,6 @@ const irParaCadastro = () => {
 <template>
   <div class="pagina">
     <div class="hero">
-      <div class="logo">👶</div>
-
       <h1>Bem-vindo de volta!</h1>
 
       <p>
@@ -84,10 +82,6 @@ const irParaCadastro = () => {
       <p class="titulo">
         Entrar na conta
       </p>
-
-      <div class="icone">
-        🔐
-      </div>
 
       <!-- E-mail -->
       <div class="campo">
@@ -159,7 +153,7 @@ const irParaCadastro = () => {
 <style scoped>
 .pagina {
   min-height: 100vh;
-  background: linear-gradient(135deg, #ff2f92, #8b5cf6);
+  background: var(--degrade-suave);
   padding: 40px 16px 32px;
   display: flex;
   flex-direction: column;
@@ -169,7 +163,7 @@ const irParaCadastro = () => {
 
 .hero {
   text-align: center;
-  color: white;
+  color: var(--cor-texto);
   padding: 8px 0 4px;
 }
 
@@ -200,7 +194,7 @@ const irParaCadastro = () => {
 
 .titulo {
   font-weight: bold;
-  color: #F6339A;
+  color: var(--cor-acento);
   text-align: center;
   font-size: 16px;
   margin: 0;
@@ -222,7 +216,7 @@ const irParaCadastro = () => {
   padding: 12px 14px;
   border: none;
   border-radius: 8px;
-  background: #F3F4F6;
+  background: var(--cor-campo);
   font-size: 14px;
   outline: none;
   box-sizing: border-box;
@@ -246,7 +240,7 @@ const irParaCadastro = () => {
 .btn-link {
   background: none;
   border: none;
-  color: #8b5cf6;
+  color: var(--cor-acento);
   font-size: 13px;
   cursor: pointer;
   text-align: right;
@@ -257,7 +251,7 @@ const irParaCadastro = () => {
 
 .btn-entrar {
   background: white;
-  color: #F6339A;
+  color: var(--cor-acento);
   border: none;
   border-radius: 12px;
   padding: 16px;
@@ -286,15 +280,15 @@ const irParaCadastro = () => {
 }
 
 .rodape p {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--cor-texto);
   font-size: 14px;
   margin: 0;
 }
 
 .btn-cadastro {
   background: transparent;
-  border: 2px solid white;
-  color: white;
+  border: 2px solid var(--cor-destaque);
+  color: var(--cor-texto);
   border-radius: 12px;
   padding: 12px 28px;
   font-size: 15px;

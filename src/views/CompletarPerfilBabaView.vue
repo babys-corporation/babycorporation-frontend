@@ -190,7 +190,7 @@ const completar = async () => {
     </div>
 
     <div v-if="sucesso" class="card sucesso">
-      ✅ Perfil completado! Redirecionando...
+      Perfil completado! Redirecionando...
     </div>
 
     <div v-if="erro" class="card erro">
@@ -204,7 +204,7 @@ const completar = async () => {
         <label class="foto-label">
           <div class="foto-preview">
             <img v-if="previewFoto" :src="previewFoto" alt="Foto" />
-            <span v-else>📷 Adicionar foto</span>
+            <span v-else>Adicionar foto</span>
           </div>
           <input type="file" accept="image/*" @change="onFotoChange" required />
         </label>
@@ -342,7 +342,7 @@ const completar = async () => {
 <style scoped>
 .pagina {
   min-height: 100vh;
-  background: linear-gradient(135deg, #ff2f92, #8b5cf6);
+  background: var(--degrade-suave);
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
@@ -351,7 +351,7 @@ const completar = async () => {
 
 .hero {
   text-align: center;
-  color: white;
+  color: var(--cor-texto);
 }
 
 .hero h1 {
@@ -378,13 +378,13 @@ const completar = async () => {
   text-align: center;
   font-size: 16px;
   font-weight: bold;
-  color: #F6339A;
+  color: var(--cor-acento);
   margin-top: 8px;
 }
 
 .dica-cep {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--cor-texto-suave);
   margin: -4px 0 0 4px;
 }
 
@@ -399,6 +399,7 @@ const completar = async () => {
 
 .linha input {
   flex: 1;
+  min-width: 0;
 }
 
 input,
@@ -406,7 +407,7 @@ textarea {
   padding: 12px 14px;
   border: none;
   border-radius: 8px;
-  background: #F3F4F6;
+  background: var(--cor-campo);
   font-size: 14px;
   outline: none;
   font-family: inherit;
@@ -421,14 +422,14 @@ textarea {
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #374151;
+  color: var(--cor-texto);
   cursor: pointer;
 }
 
 .checkbox-label input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: #F6339A;
+  accent-color: var(--cor-acento);
 }
 
 .btn-salvar {
@@ -437,16 +438,16 @@ textarea {
   border: none;
   border-radius: 12px;
   background: white;
-  color: #F6339A;
+  color: var(--cor-acento);
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  border: 2px solid #F6339A;
+  border: 2px solid var(--cor-acento);
   transition: background 0.2s, color 0.2s;
 }
 
 .btn-salvar:hover {
-  background: #F6339A;
+  background: var(--cor-acento);
   color: white;
 }
 
@@ -481,12 +482,12 @@ textarea {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: var(--cor-campo);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--cor-borda);
 }
 
 .foto-preview img {
@@ -498,7 +499,7 @@ textarea {
 .foto-preview span {
   font-size: 12px;
   text-align: center;
-  color: #6b7280;
+  color: var(--cor-texto-suave);
   padding: 8px;
 }
 

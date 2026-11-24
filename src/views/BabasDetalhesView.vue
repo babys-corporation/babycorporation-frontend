@@ -93,14 +93,14 @@ const voltar = () => {
 .barra-voltar {
   background-color: #fff;
   padding: 15px 20px;
-  border-bottom: solid #E5E5E5;
+  border-bottom: solid var(--cor-borda);
 }
 .link-voltar {
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  color: #555;
+  color: var(--cor-texto-suave);
 }
 
 .detalhe-container { padding: 20px; }
@@ -110,31 +110,31 @@ const voltar = () => {
   padding: 20px;
   border-radius: 12px;
   text-align: center;
-  border: 1px solid #E5E5E5;
+  border: 1px solid var(--cor-borda);
 }
 .avatar-container { position: relative; width: 120px; margin: 0 auto 15px auto; }
 .avatar-container img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
 .selo-verificado {
   position: absolute; bottom: 0; right: -10px;
-  background-color: #10B981; color: white;
+  background-color: var(--cor-destaque); color: white;
   font-size: 10px; padding: 4px 8px; border-radius: 20px;
   display: flex; align-items: center; gap: 3px;
 }
 
-.linhas-meta p { color: #666; font-size: 14px; margin: 5px 0; }
+.linhas-meta p { color: var(--cor-texto-suave); font-size: 14px; margin: 5px 0; }
 .avaliacao-linha {
   display: flex; align-items: center; justify-content: center; gap: 5px; margin: 10px 0;
 }
-.preco-hora { color: #F6339A; font-size: 24px; margin-top: 10px; }
+.preco-hora { color: var(--cor-acento); font-size: 24px; margin-top: 10px; }
 
-.secao-info { background: white; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid #E5E5E5; }
+.secao-info { background: white; padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--cor-borda); }
 .secao-info h3 { margin-bottom: 10px; font-size: 18px; }
 
 .tags-lista { display: flex; flex-wrap: wrap; gap: 8px; }
-.tag-badge { background: #f3f4f6; padding: 6px 12px; border-radius: 20px; font-size: 13px; }
+.tag-badge { background: var(--cor-campo); padding: 6px 12px; border-radius: 20px; font-size: 13px; }
 
 .dias-semana { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.dia-box { background: #f3f4f6; color: #aaa; padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; }
+.dia-box { background: var(--cor-campo); color: var(--cor-texto-suave); padding: 10px; border-radius: 8px; text-align: center; font-size: 12px; }
 .dia-box.ativo { background: #D1FAE5; color: #065F46; font-weight: bold; }
 
 .acoes-lateral { margin-top: 30px; }

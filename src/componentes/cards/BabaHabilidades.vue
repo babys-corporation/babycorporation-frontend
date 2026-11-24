@@ -34,7 +34,7 @@ defineProps({
   background: white;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, 0.06);
 }
 
 .secao h3 {
@@ -49,7 +49,7 @@ defineProps({
 }
 
 .tags span {
-  background: #F3F4F6;
+  background: var(--cor-campo);
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 13px;

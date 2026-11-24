@@ -33,7 +33,6 @@ defineProps({
 
     <div class="alterar">
       <span>Alterar perfis das crianças</span>
-      <span>✏️</span>
     </div>
   </div>
 </template>
@@ -43,7 +42,7 @@ defineProps({
   background: white;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, 0.06);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -58,7 +57,7 @@ defineProps({
   display: flex;
   justify-content: space-between;
   padding: 10px 12px;
-  background: #F9FAFB;
+  background: var(--cor-fundo);
   border-radius: 8px;
   font-size: 14px;
 }
@@ -76,7 +75,7 @@ defineProps({
 }
 
 .tags span {
-  background: #F3F4F6;
+  background: var(--cor-campo);
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 13px;

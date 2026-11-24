@@ -307,17 +307,16 @@ onMounted(carregarDados)
 <style scoped>
 /* ── Base ─────────────────────────────────────────── */
 .pagina {
-  --rosa: #F6339A;
-  --roxo: #8b5cf6;
-  --degrade: linear-gradient(135deg, #ff2f92, #8b5cf6);
-  --texto: #1f2937;
-  --texto-suave: #6b7280;
-  --fundo-item: #fafafa;
-  --borda: #f1f1f4;
-  --sombra: 0 4px 18px rgba(17, 24, 39, .06);
+  --rosa: var(--cor-acento);
+  --roxo: var(--cor-acento);
+  --texto: var(--cor-texto);
+  --texto-suave: var(--cor-texto-suave);
+  --fundo-item: var(--cor-campo);
+  --borda: var(--cor-borda);
+  --sombra: 0 4px 18px rgba(70, 52, 60, .06);
 
   padding: 20px 16px 40px;
-  background: #F9FAFB;
+  background: var(--cor-fundo);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -375,7 +374,7 @@ h2 {
 
 .formulario p {
   margin: 0 0 12px;
-  color: #666;
+  color: var(--cor-texto-suave);
   font-size: 14px;
 }
 
@@ -389,13 +388,13 @@ h2 {
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(246, 51, 154, .25);
+  box-shadow: 0 6px 16px rgba(70, 52, 60, .25);
   transition: transform .15s, box-shadow .15s;
 }
 
 .btn-formulario:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(246, 51, 154, .32);
+  box-shadow: 0 8px 20px rgba(70, 52, 60, .32);
 }
 
 /* ── Cabeçalho do perfil completo ─────────────────── */
@@ -424,17 +423,17 @@ h2 {
   border-radius: 50%;
   object-fit: cover;
   border: 5px solid white;
-  box-shadow: 0 6px 18px rgba(246, 51, 154, .2);
+  box-shadow: 0 6px 18px rgba(70, 52, 60, .2);
   background: white;
 }
 
 .foto-vazia {
-  color: #c4c8d0;
+  color: var(--cor-secundaria);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 44px;
-  background: #F3F4F6;
+  background: var(--cor-campo);
 }
 
 .disponivel {
@@ -458,8 +457,8 @@ h2 {
 }
 
 .disponivel.indisponivel {
-  background: #F3F4F6;
-  color: #6b7280;
+  background: var(--cor-campo);
+  color: var(--cor-texto-suave);
 }
 
 /* ── Títulos de seção ─────────────────────────────── */
@@ -499,14 +498,14 @@ h2 {
   text-align: center;
   gap: 3px;
   font-size: 14px;
-  color: #333;
+  color: var(--cor-texto);
   overflow-wrap: anywhere;
   transition: transform .15s, box-shadow .15s;
 }
 
 .item:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(17, 24, 39, .06);
+  box-shadow: 0 4px 12px rgba(70, 52, 60, .06);
 }
 
 .rotulo {
@@ -521,7 +520,7 @@ h2 {
 
 .sobre {
   margin-top: 12px;
-  background: #FDF2F8;
+  background: var(--cor-fundo);
   border-radius: 12px;
   padding: 12px 14px;
 }
@@ -529,7 +528,7 @@ h2 {
 .sobre p {
   margin: 6px 0 0;
   font-size: 14px;
-  color: #4b5563;
+  color: var(--cor-texto-suave);
   line-height: 1.6;
 }
 

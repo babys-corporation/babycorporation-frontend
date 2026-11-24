@@ -262,12 +262,12 @@ onBeforeUnmount(() => {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(17, 24, 39, 0.6);
+  background: rgba(70, 52, 60, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
-  z-index: 50;
+  z-index: 1200;
 }
 
 .modal {
@@ -279,7 +279,7 @@ onBeforeUnmount(() => {
   background: #fff;
   border-radius: 16px;
   padding: 24px 20px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 50px rgba(70, 52, 60, 0.25);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -294,32 +294,32 @@ onBeforeUnmount(() => {
   background: transparent;
   font-size: 26px;
   line-height: 1;
-  color: #888;
+  color: var(--cor-texto-suave);
   cursor: pointer;
 }
 
 h2 {
   font-size: 20px;
   font-weight: 700;
-  color: #111;
+  color: var(--cor-texto);
 }
 
 .subtitulo {
   font-size: 13px;
-  color: #666;
+  color: var(--cor-texto-suave);
 }
 
 .valor {
   font-size: 30px;
   font-weight: 800;
-  color: #f6339a;
+  color: var(--cor-acento);
 }
 
 .qrcode {
   width: 220px;
   height: 220px;
   margin: 0 auto;
-  border: 1px solid #eee;
+  border: 1px solid var(--cor-borda);
   border-radius: 12px;
   object-fit: contain;
 }
@@ -331,9 +331,9 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f3f4f6;
+  background: var(--cor-campo);
   border-radius: 12px;
-  color: #888;
+  color: var(--cor-texto-suave);
   font-size: 13px;
 }
 
@@ -341,11 +341,11 @@ h2 {
   width: 100%;
   height: 76px;
   resize: none;
-  border: 1px solid #ddd;
+  border: 1px solid var(--cor-borda);
   border-radius: 8px;
   padding: 8px;
   font-size: 11px;
-  color: #444;
+  color: var(--cor-texto);
   word-break: break-all;
 }
 
@@ -369,7 +369,7 @@ h2 {
 }
 
 .btn-principal {
-  background: #f6339a;
+  background: var(--cor-acento);
   color: #fff;
   border: none;
 }
@@ -381,13 +381,13 @@ h2 {
 
 .btn-secundario {
   background: #fff;
-  color: #333;
-  border: 1.5px solid #ddd;
+  color: var(--cor-texto);
+  border: 1.5px solid var(--cor-borda);
 }
 
 .aviso {
   font-size: 11px;
-  color: #999;
+  color: var(--cor-texto-suave);
 }
 
 .erro {

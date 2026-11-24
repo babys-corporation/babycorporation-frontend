@@ -50,8 +50,8 @@ const babas = [
         <span class="badge">✔</span>
       </div>
       <p class="nome">Responsavel</p>
-      <p class="info">💳 Pagamento efetivado</p>
-      <p class="info">🕐 Agendado</p>
+      <p class="info">Pagamento efetivado</p>
+      <p class="info">Agendado</p>
     </div>
 
     <div class="grid-criancas">
@@ -62,7 +62,7 @@ const babas = [
         </div>
         <p class="nome">Criança {{ n }}</p>
         <p class="info">{{ n === 1 ? '♀ Menina' : '♂ Menino' }}</p>
-        <p class="info">🕐 Agendado</p>
+        <p class="info">Agendado</p>
       </div>
     </div>
 
@@ -78,7 +78,7 @@ const babas = [
 <style scoped>
 .pagina {
   padding: 16px;
-  background: #F9FAFB;
+  background: var(--cor-fundo);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -87,19 +87,19 @@ const babas = [
 
 h1 { font-size: 28px; font-weight: bold; }
 
-.subtitulo { font-size: 13px; color: #888; margin-top: -8px; }
+.subtitulo { font-size: 13px; color: var(--cor-texto-suave); margin-top: -8px; }
 
 .card {
   background: white;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, 0.06);
 }
 
 .mes {
   text-align: center;
   font-weight: bold;
-  color: #F6339A;
+  color: var(--cor-acento);
   font-size: 16px;
   margin-bottom: 12px;
 }
@@ -128,7 +128,7 @@ h1 { font-size: 28px; font-weight: bold; }
 }
 
 .selecionado {
-  background: #F6339A;
+  background: var(--cor-acento);
   color: white;
 }
 
@@ -156,7 +156,7 @@ h1 { font-size: 28px; font-weight: bold; }
   position: absolute;
   top: 4px;
   right: 4px;
-  background: #22c55e;
+  background: var(--cor-destaque);
   color: white;
   border-radius: 50%;
   width: 20px;
@@ -168,7 +168,7 @@ h1 { font-size: 28px; font-weight: bold; }
 }
 
 .nome { font-weight: bold; font-size: 14px; }
-.info { font-size: 12px; color: #666; }
+.info { font-size: 12px; color: var(--cor-texto-suave); }
 
 .grid-criancas {
   display: grid;
@@ -190,7 +190,7 @@ h1 { font-size: 28px; font-weight: bold; }
 }
 
 .btn-principal {
-  background: #F6339A;
+  background: var(--cor-acento);
   color: white;
   border: none;
   border-radius: 10px;
@@ -204,8 +204,8 @@ h1 { font-size: 28px; font-weight: bold; }
 
 .btn-secundario {
   background: white;
-  color: #333;
-  border: 1.5px solid #ddd;
+  color: var(--cor-texto);
+  border: 1.5px solid var(--cor-borda);
   border-radius: 10px;
   padding: 14px;
   font-size: 15px;

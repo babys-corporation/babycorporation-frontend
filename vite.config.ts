@@ -18,11 +18,11 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
       },
       manifest: {
-        name: 'BabyCorporation', // Nome completo que aparece na tela de instalação
-        short_name: 'BabyCorporation', // Nome curtinho que fica embaixo do ícone no celular
+        name: 'BabyCare', // Nome completo que aparece na tela de instalação
+        short_name: 'BabyCare', // Nome curtinho que fica embaixo do ícone no celular
         description: 'Aplicativo para encontrar e agendar babás de confiança',
-        theme_color: '#FFFFFF', // Cor da barra de cima
-        background_color: '#FBF3FB', // Cor de fundo na tela de carregamento
+        theme_color: '#F4D2DE', // Cor da barra de cima
+        background_color: '#F9EEF2', // Cor de fundo na tela de carregamento
         display: 'standalone', // Faz parecer um app nativo, sem a barra do navegador
         scope: '/',
         start_url: '/',

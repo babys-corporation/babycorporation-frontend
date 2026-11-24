@@ -24,22 +24,22 @@ const irParaInicio = () => {
 .pagina-erro {
   text-align: center;
   padding: 100px 20px;
-  background-color: #FBF3FB;
+  background-color: var(--cor-fundo);
   min-height: 100vh;
 }
 .codigo-erro {
   font-size: 96px;
-  color: #F6339A;
+  color: var(--cor-acento);
   margin-bottom: 10px;
   font-weight: 900;
 }
 .pagina-erro h2 {
   font-size: 24px;
   margin-bottom: 15px;
-  color: #333;
+  color: var(--cor-texto);
 }
 .pagina-erro p {
-  color: #666;
+  color: var(--cor-texto-suave);
   margin-bottom: 30px;
 }
 .pagina-erro button {

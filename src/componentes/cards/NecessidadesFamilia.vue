@@ -40,7 +40,7 @@ const horario = ref('')
   background: white;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, 0.06);
 }
 
 .titulo {
@@ -68,8 +68,8 @@ const horario = ref('')
 }
 
 .inativo {
-  background: #F3F4F6;
-  color: #9CA3AF;
+  background: var(--cor-campo);
+  color: var(--cor-texto-suave);
 }
 
 .select-grupo {
@@ -82,7 +82,7 @@ const horario = ref('')
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #ddd;
+  border: 1px solid var(--cor-borda);
   border-radius: 8px;
   padding: 12px 16px;
   font-size: 14px;

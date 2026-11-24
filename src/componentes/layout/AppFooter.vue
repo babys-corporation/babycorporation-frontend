@@ -5,7 +5,7 @@ import { Baby } from 'lucide-vue-next';
 <template>
 <footer>
   <div class="footerbaby">
-    <Baby :size="35" color="#F6339A" stroke-width="1.5" />
+    <Baby :size="35" color="var(--cor-primaria)" stroke-width="1.5" />
     <h2>BabyCare</h2>
   </div>
   <div class="informacoes">
@@ -37,9 +37,12 @@ import { Baby } from 'lucide-vue-next';
         footer
 =====================*/
 footer{
-  background-color: #101828;
+  background-color: var(--cor-destaque);
   color: #FFFFFF;
   padding: 0 20px 0 40px;
+}
+footer h2 {
+  color: var(--rosa-fundo);
 }
 .footerbaby{
   display: flex;
@@ -54,11 +57,11 @@ footer div.embaixo {
 footer div.informacoes {
  text-align: left;
  margin:10px -40px;
- padding: 0 0 0 40px;
+ padding: 0 40px;
 }
 .copyright{
  text-align: center;
- border-top: solid #E5E5E5;
+ border-top: solid var(--cor-borda);
  margin: 10px -40px;
  align-items: center;
  padding: 10px;

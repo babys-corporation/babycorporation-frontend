@@ -12,8 +12,8 @@ defineProps({
       <div>
         <h2>{{ nome }}</h2>
         <div class="info-linha">
-          <span>📍 {{ cidade }}</span>
-          <span>🕐 {{ filhos }} filhos</span>
+          <span>{{ cidade }}</span>
+          <span>{{ filhos }} filhos</span>
         </div>
       </div>
       <span class="editar">✏️</span>
@@ -26,7 +26,7 @@ defineProps({
   background: white;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, 0.06);
 }
 
 .topo {
@@ -44,7 +44,7 @@ h2 {
   display: flex;
   gap: 16px;
   font-size: 13px;
-  color: #666;
+  color: var(--cor-texto-suave);
   margin-top: 4px;
 }
 

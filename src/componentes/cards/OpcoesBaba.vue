@@ -14,8 +14,8 @@ defineProps({
           <span class="badge">✔</span>
         </div>
         <p class="nome">{{ baba.nome }}</p>
-        <p class="info">📍 {{ baba.cidade }}</p>
-        <p class="disponivel">🕐 {{ baba.status }}</p>
+        <p class="info">{{ baba.cidade }}</p>
+        <p class="disponivel"> {{ baba.status }}</p>
       </div>
     </div>
     <p class="ver-todas">Ver todas →</p>
@@ -43,7 +43,7 @@ defineProps({
   background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, 0.06);
 }
 
 .img-container {
@@ -60,7 +60,7 @@ defineProps({
   position: absolute;
   top: 8px;
   right: 8px;
-  background: #22c55e;
+  background: var(--cor-destaque);
   color: white;
   border-radius: 50%;
   width: 22px;
@@ -79,12 +79,12 @@ defineProps({
 
 .info, .disponivel {
   font-size: 12px;
-  color: #666;
+  color: var(--cor-texto-suave);
   padding: 0 8px 4px;
 }
 
 .ver-todas {
-  color: #F6339A;
+  color: var(--cor-acento);
   text-align: center;
   margin-top: 16px;
   cursor: pointer;

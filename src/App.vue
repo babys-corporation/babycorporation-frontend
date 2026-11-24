@@ -40,7 +40,7 @@ body {
         main
 =====================*/
 main {
-  background-color: #F9FAFB;
+  background-color: var(--cor-fundo);
   text-align: center;
 }
 </style>

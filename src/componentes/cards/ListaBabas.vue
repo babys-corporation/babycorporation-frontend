@@ -190,11 +190,11 @@ onMounted(async () => {
 <style scoped>
 /* ── Página ───────────────────────────────────────── */
 .pagina {
-  --rosa: #F6339A;
-  --texto: #1f2937;
-  --texto-suave: #6b7280;
+  --rosa: var(--cor-acento);
+  --texto: var(--cor-texto);
+  --texto-suave: var(--cor-texto-suave);
 
-  background: #F9FAFB;
+  background: var(--cor-fundo);
   min-height: 100vh;
   padding: 28px 16px 48px;
   max-width: 1180px;
@@ -231,8 +231,8 @@ onMounted(async () => {
   background: white;
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid #f1f1f4;
-  box-shadow: 0 4px 18px rgba(17, 24, 39, .05);
+  border: 1px solid var(--cor-borda);
+  box-shadow: 0 4px 18px rgba(70, 52, 60, .05);
   transition: transform .2s, box-shadow .2s, border-color .2s;
   text-align: left;
   cursor: pointer;
@@ -242,14 +242,14 @@ onMounted(async () => {
 
 .baba-card:hover {
   transform: translateY(-3px);
-  border-color: #FBCFE8;
-  box-shadow: 0 10px 26px rgba(246, 51, 154, .12);
+  border-color: var(--cor-secundaria);
+  box-shadow: 0 10px 26px rgba(70, 52, 60, .12);
 }
 
 .foto-area {
   position: relative;
   aspect-ratio: 16 / 10;
-  background: #F3F4F6;
+  background: var(--cor-suave);
 }
 
 .foto-area img,
@@ -264,11 +264,11 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F3F4F6;
+  background: var(--cor-suave);
 }
 
 .user-default {
-  color: #c4c8d0;
+  color: var(--cor-primaria);
 }
 
 .disponivel {
@@ -284,7 +284,7 @@ onMounted(async () => {
   padding: 5px 11px;
   border-radius: 999px;
   font-weight: bold;
-  box-shadow: 0 2px 8px rgba(17, 24, 39, .12);
+  box-shadow: 0 2px 8px rgba(70, 52, 60, .12);
 }
 
 .disponivel::before {
@@ -296,11 +296,11 @@ onMounted(async () => {
 }
 
 .disponivel.indisponivel {
-  color: #6b7280;
+  color: var(--cor-texto-suave);
 }
 
 .disponivel.indisponivel::before {
-  background: #9ca3af;
+  background: var(--cor-acento);
 }
 
 .conteudo {
@@ -322,7 +322,7 @@ onMounted(async () => {
 /* descrição limitada a 3 linhas */
 .descricao {
   font-size: 14px;
-  color: #4b5563;
+  color: var(--cor-texto-suave);
   line-height: 1.55;
   margin: 0;
   display: -webkit-box;
@@ -347,8 +347,8 @@ onMounted(async () => {
   align-items: center;
   gap: 5px;
   font-size: 12px;
-  color: #4b5563;
-  background: #F3F4F6;
+  color: var(--cor-texto-suave);
+  background: var(--cor-campo);
   padding: 4px 10px;
   border-radius: 999px;
 }
@@ -361,7 +361,7 @@ onMounted(async () => {
   gap: 8px 10px;
   margin-top: auto;
   padding-top: 12px;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid var(--cor-borda);
 }
 
 .preco {
@@ -380,7 +380,7 @@ onMounted(async () => {
   font-weight: bold;
   padding: 7px 12px;
   border-radius: 999px;
-  background: #FDF2F8;
+  background: var(--cor-fundo);
   white-space: nowrap;
   transition: background .15s, color .15s;
 }
@@ -395,7 +395,7 @@ onMounted(async () => {
   padding: 48px 20px;
   color: var(--texto-suave);
   background: white;
-  border: 1px dashed #e5e7eb;
+  border: 1px dashed var(--cor-borda);
   border-radius: 16px;
 }
 
@@ -406,7 +406,7 @@ onMounted(async () => {
 .icone-vazio {
   display: block;
   margin: 0 auto 10px;
-  color: #c4c8d0;
+  color: var(--cor-secundaria);
 }
 
 /* ── Responsivo ───────────────────────────────────── */
