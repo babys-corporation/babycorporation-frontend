@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { meRequest } from '@/api/auth'
 import api from '@/api/config'
+import { mensagemDeErro } from '@/api/erros'
 import {
   Banknote,
   Cake,
@@ -143,9 +144,10 @@ async function alternarDia(dia: string) {
     baba.value = { ...baba.value, disponibilidade: data.disponibilidade }
   } catch (e: any) {
     baba.value = { ...baba.value, disponibilidade: anterior }
-    erroDisponibilidade.value =
-      e?.response?.data?.disponibilidade?.[0] ||
+    erroDisponibilidade.value = mensagemDeErro(
+      e,
       'Não foi possível salvar a disponibilidade. Tente novamente.'
+    )
   } finally {
     salvandoDia.value = null
   }

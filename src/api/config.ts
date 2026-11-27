@@ -6,9 +6,14 @@ const api = axios.create({
   baseURL,
 });
 
+// Rotas públicas: um token velho salvo no navegador não pode atrapalhar
+// o login nem o cadastro.
+const ROTAS_PUBLICAS = ["/token/", "/registro/"];
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
-  if (token) {
+  const publica = ROTAS_PUBLICAS.some((rota) => config.url?.includes(rota));
+  if (token && !publica) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -56,6 +61,11 @@ api.interceptors.response.use(
       if (newToken) {
         original.headers.Authorization = `Bearer ${newToken}`;
         return api(original);
+      }
+
+      // Sessão expirada de vez (refresh também venceu): volta para o login
+      if (!window.location.pathname.startsWith("/login")) {
+        window.location.assign("/login");
       }
     }
 

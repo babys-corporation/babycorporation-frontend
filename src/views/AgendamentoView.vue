@@ -8,6 +8,7 @@ import {
   type Agendamento,
 } from "@/api/agendamentoApi";
 import PagamentoPix from "@/componentes/cards/PagamentoPix.vue";
+import { mensagemDeErro } from "@/api/erros";
 
 const route = useRoute();
 const router = useRouter();
@@ -270,15 +271,10 @@ async function solicitarAgendamento() {
 
     iniciarPolling();
   } catch (e: any) {
-    const resposta = e?.response?.data;
-    erro.value =
-      resposta?.detail ||
-      resposta?.baba?.[0] ||
-      resposta?.data?.[0] ||
-      resposta?.hora_inicio?.[0] ||
-      resposta?.hora_fim?.[0] ||
-      resposta?.non_field_errors?.[0] ||
-      "Não foi possível solicitar o agendamento. Tente novamente.";
+    erro.value = mensagemDeErro(
+      e,
+      "Não foi possível solicitar o agendamento. Tente novamente."
+    );
   } finally {
     processando.value = false;
   }
