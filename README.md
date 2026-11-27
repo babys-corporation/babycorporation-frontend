@@ -128,14 +128,9 @@ RNF013: O sistema deve ser feito com python django.
 - Frontend: https://babycorporation-frontend.vercel.app
 - Backend (admin): https://babycorporation-backend.vercel.app/admin/
 
-# 7. Código
 
-Nosso código está em https://github.com/babys-corporation
 
-- Frontend: https://github.com/babys-corporation/babycorporation-frontend
-- Backend: https://github.com/babys-corporation/babyscorporation-backend-por-daniel-
-
-# 8. Como rodar o frontend
+# 7. Como rodar o frontend
 
 Feito com [Vue 3](https://vuejs.org/) + [Vite](https://vite.dev/), TypeScript, Pinia e Axios.
 
